@@ -9,10 +9,11 @@ class Google
     @start = start || 0
     @totalhits = maxhits || 0
     @emails = []
-    @r_urls = []
-    @r_docs = []
-    @r_pdfs = []
-    @r_txts = []
+    @r_urls = Queue.new
+    @r_docs = Queue.new
+    @r_pdfs = Queue.new
+    @r_txts = Queue.new
+    @lock = Mutex.new
   end
   
   attr_accessor :emails

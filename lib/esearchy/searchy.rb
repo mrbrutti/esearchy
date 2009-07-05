@@ -9,43 +9,47 @@ module Searchy
   def search_emails(string)
     string = string.gsub("<em>","") if self.class == Google #still not sure if this is going to work.
     list = string.scan(/[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?\^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/)
-    print_emails(list)
-    @emails.concat(list).uniq!
+    @lock.syncronize do
+      print_emails(list)
+      @emails.concat(list).uniq!
+    end
   end
   
   def search_pdfs(urls)
-    urls.uniq.each do |url|
-      web = URI.parse(url)
-      puts "Searching in PDF: #{url}"
-      begin
-        http = Net::HTTP.new(web.host,80)
-        http.start do |http|
-          request = Net::HTTP::Get.new("#{web.path}#{web.query}")
-          response = http.request(request)
-          case response
-          when Net::HTTPSuccess, Net::HTTPRedirection
-            name = "/tmp/#{Time.new.to_s}.pdf"
-            open(name, "wb") do |file|
-              file.write(response.body)
-            end
-              begin
-                receiver = PageTextReceiver.new
-                pdf = PDF::Reader.file(name, receiver)
-                search_emails(receiver.content.inspect)
-              rescue PDF::Reader::UnsupportedFeatureError
-                puts "Encrypted PDF: Unable to parse it."
-              rescue PDF::Reader::MalformedPDFError
-                puts "Malformed PDF: Unable to parse it. "
+    while urls.size >= 1
+      Thread.new do
+        web = URI.parse(url.pop)
+        puts "Searching in PDF: #{url}"
+        begin
+          http = Net::HTTP.new(web.host,80)
+          http.start do |http|
+            request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+            response = http.request(request)
+            case response
+            when Net::HTTPSuccess, Net::HTTPRedirection
+              name = "/tmp/#{Time.new.to_s}.pdf"
+              open(name, "wb") do |file|
+                file.write(response.body)
               end
-              `rm "#{name}"`
-          else
-            return response.error!
+                begin
+                  receiver = PageTextReceiver.new
+                  pdf = PDF::Reader.file(name, receiver)
+                  search_emails(receiver.content.inspect)
+                rescue PDF::Reader::UnsupportedFeatureError
+                  puts "Encrypted PDF: Unable to parse it."
+                rescue PDF::Reader::MalformedPDFError
+                  puts "Malformed PDF: Unable to parse it. "
+                end
+                `rm "#{name}"`
+            else
+              return response.error!
+            end
           end
+        rescue Net::HTTPFatalError
+          puts "Error: Something went wrong with the HTTP request"
+        rescue Net::HTTPServerException
+          puts "Error: Not longer there. 404 Not Found"
         end
-      rescue Net::HTTPFatalError
-        puts "Error: Something went wrong with the HTTP request"
-      rescue Net::HTTPServerException
-        puts "Error: Not longer there. 404 Not Found"
       end
     end
   end
@@ -55,25 +59,27 @@ module Searchy
   end
   
   def search_txts(urls)
-    urls.uniq.each do |url|
-      web = URI.parse(url)
-      puts "Searching in TXT: #{url}"
-      begin
-        http = Net::HTTP.new(web.host,80)
-        http.start do |http|
-          request = Net::HTTP::Get.new("#{web.path}#{web.query}")
-          response = http.request(request)
-          case response
-          when Net::HTTPSuccess, Net::HTTPRedirection
-            search_emails(response.body)
-          else
-            return response.error!
+    while urls.size >= 1
+      Thread.new do
+        web = URI.parse(url.pop)
+        puts "Searching in TXT: #{url}"
+        begin
+          http = Net::HTTP.new(web.host,80)
+          http.start do |http|
+            request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+            response = http.request(request)
+            case response
+            when Net::HTTPSuccess, Net::HTTPRedirection
+              search_emails(response.body)
+            else
+              return response.error!
+            end
           end
+        rescue Net::HTTPFatalError
+          puts "Error: Something went wrong with the HTTP request"
+        rescue Net::HTTPServerException
+          puts "Error: Not longer there. 404 Not Found"
         end
-      rescue Net::HTTPFatalError
-        puts "Error: Something went wrong with the HTTP request"
-      rescue Net::HTTPServerException
-        puts "Error: Not longer there. 404 Not Found"
       end
     end
   end

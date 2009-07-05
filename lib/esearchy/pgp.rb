@@ -1,12 +1,15 @@
 # http://pgp.mit.edu:11371/pks/lookup?search=.nbg.gr
 
 class PGP
+  include Searchy
+  
   def initialize(maxhits=nil)
     @emails = []
-    @r_urls = []
-    @r_docs = []
-    @r_pdfs = []
-    @r_txts = []
+    @r_urls = Queue.new
+    @r_docs = Queue.new
+    @r_pdfs = Queue.new
+    @r_txts = Queue.new
+    @lock = Mutex.new
   end
   
   def search(query)
