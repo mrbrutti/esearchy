@@ -1,0 +1,66 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'getoptlong'
+require 'rexml/document'
+
+@nmap_dir, @nmap_file, @pattern, @output, @type = nil
+
+opts = GetoptLong.new(
+[ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+['--dir','-d', GetoptLong::REQUIRED_ARGUMENT ],
+['--file','-f', GetoptLong::REQUIRED_ARGUMENT ],
+['--pattern','-p', GetoptLong::REQUIRED_ARGUMENT ],
+['--output','-o', GetoptLong::REQUIRED_ARGUMENT ],
+['--type','-t', GetoptLong::REQUIRED_ARGUMENT ]
+)
+
+opts.each do |opt, arg|
+  case opt
+    when '--help':
+      # BEGIN OF HELP
+      puts "\nHELP for Nmaport\n---------------------\n
+      --help, -h
+      \tWell I guess you know what this is for (To obtain this Help).\n
+      --dir, -d [directory_name]
+      \t The root path for the nmap files.\n
+      --pattern, -p
+      \t The pattern to use to detect file (i.e *client*).\n
+      --file, -f [file_name] 
+      \tIf we only want one file.\n
+      --output, -o
+      \tThe output file name.
+      Copyright 2009 - FreedomCoder\n"
+      #END OF HELP
+      exit(0)
+    when '--dir':
+      if File.exists?(arg)
+        @nmap_dir = arg
+      else
+        puts "Directory not found"
+      end
+        
+    when '--file':
+      if File.exists?(arg)
+        @nmap_file = arg
+      else
+        puts "File not found"
+      end
+    when '--pattern':
+      @pattern = arg
+    when '--output':
+      @output = arg
+      @type = @output.split(".")[1].upcase unless @type
+    when '--type':
+      if arg =~ /PDF|pdf|CSV|csv/
+        @type = arg.upcase
+      else
+        puts "unrecognized file type. bye!"
+        exit(0)
+      end
+    else
+    puts "Unknown command. Please try again"
+    exit(0)
+  end
+end
+
