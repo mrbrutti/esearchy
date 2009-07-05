@@ -2,7 +2,7 @@
 
 == DESCRIPTION
 Esearchy is a small library capable of searching the internet for email addresses. 
-Currently, we support Google, Bing, Yahoo, PGP, GoogleGroups, etc. </p>
+Currently, we support Google, Bing, Yahoo, PGP, GoogleGroups, etc.
 
 == SUPPORT:
 
@@ -13,11 +13,12 @@ Currently, we support Google, Bing, Yahoo, PGP, GoogleGroups, etc. </p>
    domain.clean {|e| e =~ /<|>/ }
    domain.save_to_file "~/emails.txt"
  end
-Also, in a more classic way users can create an Esearchy objetc and work on it. </p>
 
-domain = Esearchy.new :query => "domain.com", :maxhits => 500
-domain.search 
-domain.save_to_file "~/emails.txt"
+Also, in a more classic way users can create an Esearchy objetc and work on it
+
+  domain = Esearchy.new :query => "domain.com", :maxhits => 500
+  domain.search 
+  domain.save_to_file "~/emails.txt"
 
 Do to the simplicity of how new search engines or methods can be introduced we only need to follow a couple of steps to create a new plugin.
 
