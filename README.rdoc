@@ -6,7 +6,8 @@ Currently, we support Google, Bing, Yahoo, PGP, GoogleGroups, etc.
 In order to work Bing and Yahoo need an appid, for which you will have to create one for each and place them in:
 data/yahoo.key
 data/bing.key
-so, the library will be able to work properly.
+so, the library will be able to work properly. 
+You could also pass them as parameteers.
 
 == SUPPORT:
 
