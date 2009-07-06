@@ -7,11 +7,13 @@ Also, the library searches inside .pdf and .txt files for emails addresses and a
 NOTE: In order to work Bing and Yahoo need an appid, for which you will have to create one for each and place them in fles so the library will be able to work properly.
 * data/yahoo.key
 * data/bing.key
- Soon, users should be able to also pass them as parameters.
+
+Soon, users should be able to also pass them as parameters.
 
 == SUPPORT:
-  * http://github.com/FreedomCoder/esearchy/issues
-  * Emails from github.
+
+* http://github.com/FreedomCoder/esearchy/issues
+* Emails from github.
 
 == SYNOPSIS:
 For now, there are two main ways of performing a search, "the ruby way"
