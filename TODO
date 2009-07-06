@@ -3,9 +3,13 @@ TO DO
 
 - Implement the .doc search using the Platform and the win32api in windows. 
 - make it windows compatible.
-- Implement a better way to read the AppID keys for yahoo and Bing. 
-- Make it possible to suppy the total of desires hits. 
-- Implement a more open regex that will cover cases such as  
+- [PARTIALLY COMPLETED] Implement a better way to read the AppID keys for yahoo and Bing. 
+- [COMPLETED] Make it possible to suppy the total of desires hits. 
+- [COMPLETED] Implement a more open regex that will cover cases such as  
 		- user @ domain.com, 
 		- user at domain.com
 		- user at domain dot com
+- Add LinkedIn Support and other social network sites
+  		- Fetch results into Yahoo People to obtain possible emails accounts.
+- Add Random User-Agent support for Search Engines to prevent from being banned. 
+- Add Random sleep times to avoid being banned. 

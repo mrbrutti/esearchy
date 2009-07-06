@@ -1,6 +1,5 @@
 #!/usr/bin/ruby
 
-
 require 'rubygems'
 require 'getoptlong'
 require 'esearchy'
@@ -18,7 +17,8 @@ opts = GetoptLong.new(
 ['--filter','-p', GetoptLong::REQUIRED_ARGUMENT ],
 ['--output','-o', GetoptLong::REQUIRED_ARGUMENT ],
 ['--yahoo_key','-y', GetoptLong::REQUIRED_ARGUMENT ],
-['--bing_key','-b', GetoptLong::REQUIRED_ARGUMENT ]
+['--bing_key','-b', GetoptLong::REQUIRED_ARGUMENT ],
+['--maxhits','-m', GetoptLong::REQUIRED_ARGUMENT ]
 )
 
 opts.each do |opt, arg|
@@ -57,7 +57,8 @@ opts.each do |opt, arg|
       @pattern = arg
     when '--output':
       @output = arg
-    when '--type':
+    when '--maxhits':
+      @maxhits = arg
     else
       puts "Unknown command. Please try again"
       exit(0)
