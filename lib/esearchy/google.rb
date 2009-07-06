@@ -14,6 +14,7 @@ class Google
     @r_pdfs = Queue.new
     @r_txts = Queue.new
     @lock = Mutex.new
+    @threads = []
   end
   
   attr_accessor :emails

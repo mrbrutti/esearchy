@@ -1,5 +1,3 @@
-# http://pgp.mit.edu:11371/pks/lookup?search=.nbg.gr
-
 class PGP
   include Searchy
   
@@ -11,7 +9,7 @@ class PGP
     @r_txts = Queue.new
     @lock = Mutex.new
   end
-  
+  attr_accessor :emails
   def search(query)
     @query = query
     http = Net::HTTP.new("pgp.mit.edu",11371)

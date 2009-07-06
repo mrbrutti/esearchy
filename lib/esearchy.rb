@@ -1,5 +1,5 @@
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
-%w{google bing yahoo}.each { |lib| require local_path + lib } 
+%w{google bing yahoo PGP}.each { |lib| require local_path + lib } 
 
 class ESearchy
   def initialize(options={}, &block)
@@ -9,15 +9,14 @@ class ESearchy
     @engines = options[:engines] || {"Google" => Google, 
                                      "Bing" => Bing, 
                                      "Yahoo" => Yahoo,
-                                     "Pgpg" => Pgp }
-    @engines.each do |n,e| 
-      @engines[n] = e.new(@maxhits)
-    end
+                                     "PGP" => PGP }
+    @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
     @emails = Array.new
     @threads = Array.new
     block.call(self) if block_given?
   end
-  attr_accessor :engines, :query, :threads, :maxhits, :depth_search
+  attr_accessor :engines, :query, :threads, :depth_search
+  attr_reader :maxhits
   
   def search(query=nil)
     @engines.each do |n,e|
@@ -41,9 +40,15 @@ class ESearchy
     end
   end
   
+  def maxhits=(value)
+    @engines.each do |n,e|
+      e.maxhits = value
+    end
+  end
+  
   def save_to_file(file)
     open(file,"w") do |f|
-      emails.each { |e| f << e }
+      emails.each { |e| f << e + "\n" }
     end
   end
   

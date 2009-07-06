@@ -9,6 +9,7 @@ class Bing
     @appid = appid || Keys::BING_APP_KEY
     @start = start || 0
     @emails = []
+    @threads = []
     @totalhits = maxhits || 0
     @r_urls = Queue.new
     @r_docs = Queue.new

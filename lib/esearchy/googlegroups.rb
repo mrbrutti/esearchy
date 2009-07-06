@@ -14,7 +14,6 @@ class GoogleGroups
     @r_txts = Queue.new
     @lock = Mutex.new
   end
-  
   attr_accessor :emails
   
   def search(query)

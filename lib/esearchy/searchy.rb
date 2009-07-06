@@ -3,13 +3,10 @@ local_path = "#{File.dirname(__FILE__)}/"
 %w{pdf2txt}.each {|lib| require local_path + lib}
 
 module Searchy
-  #Basic method to search for email addresses on strings.
-  # in: string to be analyze
-  # out: array of found emails 
   def search_emails(string)
     string = string.gsub("<em>","") if self.class == Google #still not sure if this is going to work.
     list = string.scan(/[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?\^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/)
-    @lock.syncronize do
+    @lock.synchronize do
       print_emails(list)
       @emails.concat(list).uniq!
     end
@@ -17,9 +14,9 @@ module Searchy
   
   def search_pdfs(urls)
     while urls.size >= 1
-      Thread.new do
-        web = URI.parse(url.pop)
-        puts "Searching in PDF: #{url}"
+      @threads << Thread.new do
+        web = URI.parse(urls.pop)
+        puts "Searching in PDF: #{web.host}#{web.path}#{web.query}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -31,27 +28,30 @@ module Searchy
               open(name, "wb") do |file|
                 file.write(response.body)
               end
-                begin
-                  receiver = PageTextReceiver.new
-                  pdf = PDF::Reader.file(name, receiver)
-                  search_emails(receiver.content.inspect)
-                rescue PDF::Reader::UnsupportedFeatureError
-                  puts "Encrypted PDF: Unable to parse it."
-                rescue PDF::Reader::MalformedPDFError
-                  puts "Malformed PDF: Unable to parse it. "
-                end
-                `rm "#{name}"`
+              begin
+                receiver = PageTextReceiver.new
+                pdf = PDF::Reader.file(name, receiver)
+                search_emails(receiver.content.inspect)
+              rescue PDF::Reader::UnsupportedFeatureError
+                puts "Encrypted PDF: Unable to parse it.\n"
+              rescue PDF::Reader::MalformedPDFError
+                puts "Malformed PDF: Unable to parse it.\n"
+              end
+              `rm "#{name}"`
             else
               return response.error!
             end
           end
         rescue Net::HTTPFatalError
-          puts "Error: Something went wrong with the HTTP request"
+          puts "Error: Something went wrong with the HTTP request.\n"
         rescue Net::HTTPServerException
-          puts "Error: Not longer there. 404 Not Found"
+          puts "Error: Not longer there. 404 Not Found.\n"
+        rescue
+          puts "Error: < .. SocketError .. >\n"
         end
       end
     end
+    @threads.each {|t| t.join } if @threads != nil
   end
   
   def search_docs(urls)
@@ -60,9 +60,9 @@ module Searchy
   
   def search_txts(urls)
     while urls.size >= 1
-      Thread.new do
-        web = URI.parse(url.pop)
-        puts "Searching in TXT: #{url}"
+      @threads << Thread.new do 
+        web = URI.parse(urls.pop)
+        puts "Searching in TXT: #{web.host}#{web.path}#{web.query}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -76,12 +76,15 @@ module Searchy
             end
           end
         rescue Net::HTTPFatalError
-          puts "Error: Something went wrong with the HTTP request"
+          puts "Error: Something went wrong with the HTTP request\n"
         rescue Net::HTTPServerException
-          puts "Error: Not longer there. 404 Not Found"
+          puts "Error: Not longer there. 404 Not Found.\n"
+        rescue
+          puts "Error: < .... >"
         end
       end
     end
+    @threads.each {|t| t.join } if @threads != nil
   end
   
   # HELPER METHODS --------------------------------------------------------------------------------- 
@@ -101,6 +104,10 @@ module Searchy
     @emails.delete_if &block.call
   end
   
+  def maxhits=( value )
+    @totalhits = value
+  end
+    
   def search_depth
     search_pdfs @r_pdfs
     search_txts @r_txts

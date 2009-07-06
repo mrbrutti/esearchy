@@ -14,6 +14,7 @@ class Yahoo
     @r_docs = Queue.new
     @r_pdfs = Queue.new
     @r_txts = Queue.new
+    @threads = []
     @lock = Mutex.new
   end
   attr_accessor :emails
