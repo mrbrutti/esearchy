@@ -1,17 +1,21 @@
 = Esearch
 
 == DESCRIPTION
-Esearchy is a small library capable of searching the internet for email addresses. 
-Currently, we support Google, Bing, Yahoo, PGP, GoogleGroups, etc.
-In order to work Bing and Yahoo need an appid, for which you will have to create one for each and place them in:
-data/yahoo.key
-data/bing.key
-so, the library will be able to work properly. 
-You could also pass them as parameteers.
+Esearchy is a small library capable of searching the internet for email addresses. Currently, we the supported search methods are engines such as Google, Bing, Yahoo, PGP servers, GoogleGroups, etc , but I intend to add many more.
+
+Also, the library searches inside .pdf and .txt files for emails addresses and adds them to the list of found accounts.
+NOTE: In order to work Bing and Yahoo need an appid, for which you will have to create one for each and place them in fles so the library will be able to work properly.
+* data/yahoo.key
+* data/bing.key
+ Soon, users should be able to also pass them as parameters.
 
 == SUPPORT:
+  * http://github.com/FreedomCoder/esearchy/issues
+  * Emails from github.
 
 == SYNOPSIS:
+For now, there are two main ways of performing a search, "the ruby way"
+
  Esearchy.create "domain.com" do |domain|
    domain.maxhits = 500
    domain.search 
@@ -19,27 +23,11 @@ You could also pass them as parameteers.
    domain.save_to_file "~/emails.txt"
  end
 
-Also, in a more classic way users can create an Esearchy objetc and work on it
+and the more classic way in which users can create an Esearchy objetc and work on it
 
   domain = Esearchy.new :query => "domain.com", :maxhits => 500
   domain.search 
   domain.save_to_file "~/emails.txt"
-
-Do to the simplicity of how new search engines or methods can be introduced we only need to follow a couple of steps to create a new plugin.
-
-  class NAME
-    include searchy
-
-    def initiialize(maxhits=nil, *args)
-    end
-    attr_accessor :emails 
-
-    def search 
-    end
-
-    def parse
-    end
-  end
 
 == REQUIREMENTS:
 
