@@ -55,7 +55,7 @@ class ESearchy
   end
   
   def save_to_file(file)
-    open(file,"w") do |f|
+    open(file,"a") do |f|
       emails.each { |e| f << e + "\n" }
     end
   end
