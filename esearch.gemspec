@@ -16,5 +16,6 @@ SPEC = Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README"] 
   s.add_dependency("pdf/reader", ">= 0.7.5")
   s.add_dependency("json", ">= 1.1.6")
+  s.add_dependency("rubyzip", ">= 0.9.1")
   #s.add_dependency("Platform", ">= 0.4.0")
 end 

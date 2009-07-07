@@ -1,5 +1,7 @@
 require 'digest/sha2'
 require 'net/http'
+require 'zip/zip'
+require 'zip/zipfilesystem'
 local_path = "#{File.dirname(__FILE__)}/"
 %w{pdf2txt}.each {|lib| require local_path + lib}
 
@@ -62,7 +64,48 @@ module Searchy
   def search_docs(urls)
     #TO BE IMPLEMENTED, feeling lazy ... :) 
   end
-  
+    
+  def search_officex(urls)
+    while urls.size >= 1
+      @threads << Thread.new do
+        web = URI.parse(urls.pop)
+        puts "Searching in PDF: #{web.to_s}\n"
+        begin
+          http = Net::HTTP.new(web.host,80)
+          http.start do |http|
+            request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+            response = http.request(request)
+            case response
+            when Net::HTTPSuccess, Net::HTTPRedirection
+              name = "/tmp/#{hash_url(web.to_s)}.docx"
+              open(name, "wb") do |file|
+                file.write(response.body)
+              end
+              begin
+                Zip::ZipFile.open(name) do |zip|
+                  text = z.entries.each { |e| zip.file.read(e.name) if e.name =~ /.xml$/}
+                  search_emails(text)
+                end
+              rescue
+                puts "Something went wrong parsing the .docx\n"
+              end
+              `rm "#{name}"`
+            else
+              return response.error!
+            end
+          end
+        rescue Net::HTTPFatalError
+          puts "Error: Something went wrong with the HTTP request.\n"
+        rescue Net::HTTPServerException
+          puts "Error: Not longer there. 404 Not Found.\n"
+        rescue
+          puts "Error: < .. SocketError .. >\n"
+        end
+      end
+    end
+    @threads.each {|t| t.join } if @threads != nil
+  end
+   
   def search_txts(urls)
     while urls.size >= 1
       @threads << Thread.new do 
@@ -128,6 +171,7 @@ module Searchy
   def search_depth
     search_pdfs @r_pdfs
     search_txts @r_txts
+    search_officex @r_officexs
     #search_docs @r_docs
   end
 end

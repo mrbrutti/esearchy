@@ -13,6 +13,7 @@ class Google
     @r_docs = Queue.new
     @r_pdfs = Queue.new
     @r_txts = Queue.new
+    @r_officexs = Queue.new
     @lock = Mutex.new
     @threads = []
   end
@@ -57,13 +58,20 @@ class Google
       when /PDF/
         @r_pdfs << result[1]
       when /DOC/
-        @r_docs << result[1]
+        case result[1]
+        when /.doc$/
+          @r_docs << result[1]
+        when /.docx$|.xlsx$|.pptx$/
+          @r_officexs << result[1]
+        end
       when nil
         case result[2]
         when /.pdf$/
           @r_pdfs << result[2]
         when /.doc$/
           @r_docs << result[2]
+        when /.docx$|.xlsx$|.pptx$/
+          @r_officexs << result[2]
         when /.txt$/
           @r_txts << result[2]
         else

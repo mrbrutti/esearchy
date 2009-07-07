@@ -14,6 +14,7 @@ class Bing
     @r_urls = Queue.new
     @r_docs = Queue.new
     @r_pdfs = Queue.new
+    @r_officexs = Queue.new
     @r_txts = Queue.new
     @lock = Mutex.new
   end
@@ -60,6 +61,8 @@ class Bing
       case result["Url"]
       when /.pdf$/
         @r_pdfs << result["Url"]
+      when /.docx$|.xlsx$|.pptx$/
+        @r_officexs << result["Url"]
       when /.doc$/
         @r_docs << result["Url"]
       when /.txt$/

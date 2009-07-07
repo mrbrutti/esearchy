@@ -3,7 +3,7 @@
 == DESCRIPTION
 Esearchy is a small library capable of searching the internet for email addresses. Currently, we the supported search methods are engines such as Google, Bing, Yahoo, PGP servers, GoogleGroups, etc , but I intend to add many more.
 
-Also, the library searches inside .pdf and .txt files for emails addresses and adds them to the list of found accounts.
+Also, the library searches inside .pdf, .docx, .xlsx, .pptx and .txt files for emails addresses and adds them to the list of found accounts.
 NOTE: In order to work Bing and Yahoo need an appid, for which you will have to create one for each and place them in fles so the library will be able to work properly.
 * data/yahoo.key
 * data/bing.key

@@ -13,6 +13,7 @@ class Yahoo
     @r_urls = Queue.new
     @r_docs = Queue.new
     @r_pdfs = Queue.new
+    @r_officexs = Queue.new
     @r_txts = Queue.new
     @threads = []
     @lock = Mutex.new
@@ -59,6 +60,8 @@ class Yahoo
       case result["url"]
       when /.pdf$/
         @r_pdfs << result["url"]
+      when /.docx$|.xlsx$|.pptx$/
+        @r_officexs << result["url"]
       when /.doc$/
         @r_docs << result["url"]
       when /.txt$/

@@ -1,7 +1,9 @@
 TO DO
 -----
 
-- Implement the .doc search using the Platform and the win32api in windows. 
+- [Partially] Implement the .doc search using the Platform and the win32api in windows. 
+   |--> (Now it reads .docx,.xlsx,.pptx) It still does not reads .docs but maybe soon.
+	 
 - make it windows compatible.
 - [PARTIALLY COMPLETED] Implement a better way to read the AppID keys for yahoo and Bing. 
 - [COMPLETED] Make it possible to suppy the total of desires hits. 
