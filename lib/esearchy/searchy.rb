@@ -1,3 +1,4 @@
+require 'digest/sha2'
 require 'net/http'
 local_path = "#{File.dirname(__FILE__)}/"
 %w{pdf2txt}.each {|lib| require local_path + lib}
@@ -20,7 +21,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do
         web = URI.parse(urls.pop)
-        puts "Searching in PDF: #{web.host}#{web.path}#{web.query}\n"
+        puts "Searching in PDF: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -28,7 +29,7 @@ module Searchy
             response = http.request(request)
             case response
             when Net::HTTPSuccess, Net::HTTPRedirection
-              name = "/tmp/#{Time.new.to_s}.pdf"
+              name = hash_url(web.to_s)
               open(name, "wb") do |file|
                 file.write(response.body)
               end
@@ -66,7 +67,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do 
         web = URI.parse(urls.pop)
-        puts "Searching in TXT: #{web.host}#{web.path}#{web.query}\n"
+        puts "Searching in TXT: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -104,6 +105,11 @@ module Searchy
       end
     end
   end
+  
+  def hash_url(url)
+    Digest::SHA2.hexdigest("#{Time.now.to_f}--#{url}")
+  end
+  
   def fix(list)
     list.each do |email|
       e.gsub!(" at ","@")
