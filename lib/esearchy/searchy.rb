@@ -29,7 +29,7 @@ module Searchy
             response = http.request(request)
             case response
             when Net::HTTPSuccess, Net::HTTPRedirection
-              name = hash_url(web.to_s)
+              name = "/tmp/#{hash_url(web.to_s)}.pdf"
               open(name, "wb") do |file|
                 file.write(response.body)
               end

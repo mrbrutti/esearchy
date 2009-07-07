@@ -16,7 +16,16 @@ Soon, users should be able to also pass them as parameters.
 * Emails from github.
 
 == SYNOPSIS:
-For now, there are two main ways of performing a search, "the ruby way"
+
+For now, there are two main ways of performing a search:
+
+* Executable CLI command
+
+  esearchy --domain domain.com --maxhits 500 --yahoo_key dkajsdkajskdad  --output "~/emails.txt"
+
+* Library
+
+For thouse who want to integrate this to their application you can use it in "the ruby way"
 
  Esearchy.create "domain.com" do |domain|
    domain.maxhits = 500
@@ -25,7 +34,7 @@ For now, there are two main ways of performing a search, "the ruby way"
    domain.save_to_file "~/emails.txt"
  end
 
-and the more classic way in which users can create an Esearchy objetc and work on it
+or in the more classic way in which you can create an Esearchy objetc and work on it
 
   domain = Esearchy.new :query => "domain.com", :maxhits => 500
   domain.search 
