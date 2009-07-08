@@ -1,4 +1,4 @@
-%w{pdf/reader net/http}.each { |lib| require lib }
+%w{pdf/reader}.each { |lib| require lib }
 
 class PageTextReceiver
    attr_accessor :content

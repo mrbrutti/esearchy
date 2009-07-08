@@ -1,4 +1,5 @@
-require 'rubygems' 
+require 'rubygems'
+# require 'platform'
 SPEC = Gem::Specification.new do |s| 
   s.name = "esearchy"
   s.version = "0.0.2"
@@ -17,5 +18,7 @@ SPEC = Gem::Specification.new do |s|
   s.add_dependency("pdf/reader", ">= 0.7.5")
   s.add_dependency("json", ">= 1.1.6")
   s.add_dependency("rubyzip", ">= 0.9.1")
-  #s.add_dependency("Platform", ">= 0.4.0")
+  s.add_dependency("platform", ">= 0.4.0")
+  #Still not sure of what version and how to filter this only to be required on Windows
+  #s.add_dependency("win32ole", ">= 0.0.0") if Platform::IMPL == :mswin
 end 

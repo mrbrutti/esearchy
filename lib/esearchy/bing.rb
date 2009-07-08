@@ -65,7 +65,7 @@ class Bing
         @r_officexs << result["Url"]
       when /.doc$/i
         @r_docs << result["Url"]
-      when /.txt$|.rtf$/i
+      when /.txt$|.rtf$|ans/i
         @r_txts << result["Url"]
       else
         @r_urls << result["Url"]

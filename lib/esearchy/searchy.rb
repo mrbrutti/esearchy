@@ -2,6 +2,10 @@ require 'digest/sha2'
 require 'net/http'
 require 'zip/zip'
 require 'zip/zipfilesystem'
+require 'platform'
+if Platform::IMPL == :mswin
+  require 'win32ole' 
+end
 local_path = "#{File.dirname(__FILE__)}/"
 %w{pdf2txt}.each {|lib| require local_path + lib}
 
@@ -61,10 +65,51 @@ module Searchy
     @threads.each {|t| t.join } if @threads != nil
   end
   
+  if Platform::IMPL == :mswin
   def search_docs(urls)
-    #TO BE IMPLEMENTED, feeling lazy ... :) 
+    while urls.size >= 1
+       @threads << Thread.new do
+         web = URI.parse(urls.pop)
+         puts "Searching in DOC: #{web.to_s}\n"
+         begin
+           http = Net::HTTP.new(web.host,80)
+           http.start do |http|
+             request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+             response = http.request(request)
+             case response
+             when Net::HTTPSuccess, Net::HTTPRedirection
+               name = "/tmp/#{hash_url(web.to_s)}.doc"
+               open(name, "wb") do |file|
+                 file.write(response.body)
+               end
+               begin
+                 word = WIN32OLE.new('word.application')
+                 word.documents.open(name)
+                 word.selection.wholestory
+                 search_emails(word.selection.text.chomp)
+                 word.activedocument.close( false )
+                 word.quit
+               rescue
+                 puts "Something went wrong parsing the .doc}\n"
+               end
+               `rm "#{name}"`
+             else
+               return response.error!
+             end
+           end
+         rescue Net::HTTPFatalError
+           puts "Error: Something went wrong with the HTTP request.\n"
+         rescue Net::HTTPServerException
+           puts "Error: Not longer there. 404 Not Found.\n"
+         rescue
+           puts "Error: < .. SocketError .. >\n"
+         end
+       end
+     end
+     @threads.each {|t| t.join } if @threads != nil
   end
-    
+  end
+  
   def search_office_xml(urls)
     while urls.size >= 1
       @threads << Thread.new do
@@ -111,7 +156,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do 
         web = URI.parse(urls.pop)
-        puts "Searching in #{web.to_s.scan(/txt|rtf/i).upcase}: #{web.to_s}\n"
+        puts "Searching in #{web.to_s.scan(/txt|rtf|ans/i).upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -173,6 +218,6 @@ module Searchy
     search_pdfs @r_pdfs
     search_txts @r_txts
     search_office_xml @r_officexs
-    #search_docs @r_docs
+    search_docs @r_docs if Platform::IMPL == :mswin
   end
 end

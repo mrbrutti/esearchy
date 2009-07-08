@@ -64,7 +64,7 @@ class Yahoo
         @r_officexs << result["url"]
       when /.doc$/i
         @r_docs << result["url"]
-      when /.txt$|.rtf$/i
+      when /.txt$|.rtf$|ans/i
         @r_txts << result["url"]
       else
         @r_urls << result["url"]
