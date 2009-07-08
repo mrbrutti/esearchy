@@ -114,7 +114,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do
         web = URI.parse(urls.pop)
-        format = web.scan(/docx|xlsx|pptx/i)
+        format = web.scan(/docx|xlsx|pptx/i)[0]
         puts "Searching in #{format.upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
@@ -156,7 +156,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do 
         web = URI.parse(urls.pop)
-        puts "Searching in #{web.to_s.scan(/txt|rtf|ans/i).upcase}: #{web.to_s}\n"
+        puts "Searching in #{web.to_s.scan(/txt|rtf|ans/i)[0].upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -200,7 +200,7 @@ module Searchy
   end
   
   def fix(list)
-    list.each do |email|
+    list.each do |e|
       e.gsub!(" at ","@")
       e.gsub!(" dot ",".")
     end
@@ -215,9 +215,9 @@ module Searchy
   end
     
   def search_depth
-    search_pdfs @r_pdfs
-    search_txts @r_txts
-    search_office_xml @r_officexs
+    search_pdfs @r_pdfs if @r_pdfs
+    search_txts @r_txts if @r_txts
+    search_office_xml @r_officexs if @r_officexs
     search_docs @r_docs if Platform::IMPL == :mswin
   end
 end

@@ -72,7 +72,7 @@ class Google
           @r_docs << result[2]
         when /.docx$|.xlsx$|.pptx$/i
           @r_officexs << result[2]
-        when /.txt$|.rtf$|ans/i
+        when /.txt$|.rtf$|ans$/i
           @r_txts << result[2]
         else
           @r_urls << result[2]

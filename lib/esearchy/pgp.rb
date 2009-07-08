@@ -3,11 +3,8 @@ class PGP
   
   def initialize(maxhits=nil)
     @emails = []
-    @r_urls = Queue.new
-    @r_docs = Queue.new
-    @r_pdfs = Queue.new
-    @r_txts = Queue.new
     @lock = Mutex.new
+    @threads = []
   end
   attr_accessor :emails
   def search(query)
