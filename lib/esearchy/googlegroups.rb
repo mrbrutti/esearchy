@@ -12,7 +12,9 @@ class GoogleGroups
     @r_docs = Queue.new
     @r_pdfs = Queue.new
     @r_txts = Queue.new
+    @r_officexs = Queue.new
     @lock = Mutex.new
+    @threads = []
   end
   attr_accessor :emails
   
@@ -51,17 +53,16 @@ class GoogleGroups
     @totalhits= html.scan(/<\/b> of about <b>(.*)<\/b> for /)[0][0].gsub(",","").to_i  if @totalhits == 0
     html.scan(/<div class=g align="left"><a href="([0-9A-Za-z:\\\/?&=@+%.;"'()_-]+)" target=""/).each do |result|
       case result[0]
-        when /.pdf$/
-          @r_pdfs << result[0]
-        when /.doc$/
-          @r_docs << result[0]
-        when /.txt$/
-          @r_txts << result[0]
-        else
-          @r_urls << result[0]
-        end
+      when /.pdf$/i
+        @r_pdfs << result[0]
+      when /.doc$/i
+        @r_docs << result[0]
+      when /.docx$|.xlsx$|.pptx$/i
+        @r_officexs << result[0]
+      when /.txt$|.asn$/i
+        @r_txts << result[0]
       else
-        puts "I do not parse the #{result[0]} filetype yet:)"
+        @r_urls << result[0]
       end
     end
   end

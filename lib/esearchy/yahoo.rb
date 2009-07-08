@@ -51,7 +51,6 @@ class Yahoo
       puts "Error: Something went wrong with the HTTP request"
     end
   end
-  # This should return an array of emails.
 
   def parse(json)
     doc = JSON.parse(json) 

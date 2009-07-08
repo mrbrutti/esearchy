@@ -20,5 +20,5 @@ SPEC = Gem::Specification.new do |s|
   s.add_dependency("rubyzip", ">= 0.9.1")
   s.add_dependency("platform", ">= 0.4.0")
   #Still not sure of what version and how to filter this only to be required on Windows
-  #s.add_dependency("win32ole", ">= 0.0.0") if Platform::IMPL == :mswin
+  #s.add_dependency("win32ole", ">= 1.2.1") if Platform::IMPL == :mswin
 end 
