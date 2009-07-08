@@ -1,4 +1,4 @@
-%w{rubygems cgi net/http}.each { |lib| require lib }
+%w{rubygems json cgi net/http}.each { |lib| require lib }
 local_path = "#{File.dirname(__FILE__)}/"
 %w{searchy keys}.each {|lib| require local_path + lib}
 

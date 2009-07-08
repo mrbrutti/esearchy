@@ -2,12 +2,14 @@ require 'digest/sha2'
 require 'net/http'
 require 'zip/zip'
 require 'zip/zipfilesystem'
-require 'platform'
-if Platform::IMPL == :mswin
-  require 'win32ole' 
-end
 local_path = "#{File.dirname(__FILE__)}/"
-%w{pdf2txt}.each {|lib| require local_path + lib}
+require local_path + 'pdf2txt'
+if RUBY_PLATFORM =~ /mingw|mswin/
+ require 'win32ole'
+ require local_path + 'wcol'
+end
+
+
 
 module Searchy
   def search_emails(string)
@@ -65,49 +67,49 @@ module Searchy
     @threads.each {|t| t.join } if @threads != nil
   end
   
-  if Platform::IMPL == :mswin
-  def search_docs(urls)
-    while urls.size >= 1
-       @threads << Thread.new do
-         web = URI.parse(urls.pop)
-         puts "Searching in DOC: #{web.to_s}\n"
-         begin
-           http = Net::HTTP.new(web.host,80)
-           http.start do |http|
-             request = Net::HTTP::Get.new("#{web.path}#{web.query}")
-             response = http.request(request)
-             case response
-             when Net::HTTPSuccess, Net::HTTPRedirection
-               name = "/tmp/#{hash_url(web.to_s)}.doc"
-               open(name, "wb") do |file|
-                 file.write(response.body)
+  if RUBY_PLATFORM =~ /mingw|mswin/
+    def search_docs(urls)
+      while urls.size >= 1
+         @threads << Thread.new do
+           web = URI.parse(urls.pop)
+           puts "Searching in DOC: #{web.to_s}\n"
+           begin
+             http = Net::HTTP.new(web.host,80)
+             http.start do |http|
+               request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+               response = http.request(request)
+               case response
+               when Net::HTTPSuccess, Net::HTTPRedirection
+                 name = "/tmp/#{hash_url(web.to_s)}.doc"
+                 open(name, "wb") do |file|
+                   file.write(response.body)
+                 end
+                 begin
+                   word = WIN32OLE.new('word.application')
+                   word.documents.open(name)
+                   word.selection.wholestory
+                   search_emails(word.selection.text.chomp)
+                   word.activedocument.close( false )
+                   word.quit
+                 rescue
+                   puts "Something went wrong parsing the .doc}\n"
+                 end
+                 `rm "#{name}"`
+               else
+                 return response.error!
                end
-               begin
-                 word = WIN32OLE.new('word.application')
-                 word.documents.open(name)
-                 word.selection.wholestory
-                 search_emails(word.selection.text.chomp)
-                 word.activedocument.close( false )
-                 word.quit
-               rescue
-                 puts "Something went wrong parsing the .doc}\n"
-               end
-               `rm "#{name}"`
-             else
-               return response.error!
              end
+           rescue Net::HTTPFatalError
+             puts "Error: Something went wrong with the HTTP request.\n"
+           rescue Net::HTTPServerException
+             puts "Error: Not longer there. 404 Not Found.\n"
+           rescue
+             puts "Error: < .. SocketError .. >\n"
            end
-         rescue Net::HTTPFatalError
-           puts "Error: Something went wrong with the HTTP request.\n"
-         rescue Net::HTTPServerException
-           puts "Error: Not longer there. 404 Not Found.\n"
-         rescue
-           puts "Error: < .. SocketError .. >\n"
          end
        end
-     end
-     @threads.each {|t| t.join } if @threads != nil
-  end
+       @threads.each {|t| t.join } if @threads != nil
+    end
   end
   
   def search_office_xml(urls)
@@ -183,13 +185,25 @@ module Searchy
   
   # HELPER METHODS --------------------------------------------------------------------------------- 
   
-  def print_emails( list )
+  def print_emails(list)
     list.each do |email|
       unless @emails.include?(email)
-        if email.match(/#{@query.gsub("@","").split('.')[0]}/)
-          puts "\033[31m" + email + "\033\[0m"
+        unless RUBY_PLATFORM =~ /mingw|mswin/
+          if email.match(/#{@query.gsub("@","").split('.')[0]}/)
+            puts "\033[31m" + email + "\033\[0m"
+          else
+            puts "\033[32m" + email + "\033\[0m"
+          end
         else
-          puts "\033[32m" + email + "\033\[0m"
+          if email.match(/#{@query.gsub("@","").split('.')[0]}/)
+            Wcol::color(12)
+            puts email
+            Wcol::color(7)
+          else
+            Wcol::color(2)
+            puts email
+            Wcol::color(7)
+          end
         end
       end
     end
@@ -218,6 +232,8 @@ module Searchy
     search_pdfs @r_pdfs if @r_pdfs
     search_txts @r_txts if @r_txts
     search_office_xml @r_officexs if @r_officexs
-    search_docs @r_docs if Platform::IMPL == :mswin
+    if RUBY_PLATFORM =~ /mingw|mswin/
+      search_docs @r_docs if @r_docs
+    end
   end
 end
