@@ -58,13 +58,13 @@ class Yahoo
     @totalhits = doc["ysearchresponse"]["totalhits"].to_i if @totalhits == 0
     doc["ysearchresponse"]["resultset_web"].each do |result|
       case result["url"]
-      when /.pdf$/
+      when /.pdf$/i
         @r_pdfs << result["url"]
-      when /.docx$|.xlsx$|.pptx$/
+      when /.docx$|.xlsx$|.pptx$/i
         @r_officexs << result["url"]
-      when /.doc$/
+      when /.doc$/i
         @r_docs << result["url"]
-      when /.txt$/
+      when /.txt$|.rtf$/i
         @r_txts << result["url"]
       else
         @r_urls << result["url"]

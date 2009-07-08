@@ -57,22 +57,22 @@ class Google
       case result[0]
       when /PDF/
         @r_pdfs << result[1]
-      when /DOC/
+      when /DOC|XLS|PPT/
         case result[1]
-        when /.doc$/
+        when /.doc$/i
           @r_docs << result[1]
-        when /.docx$|.xlsx$|.pptx$/
+        when /.docx$|.xlsx$|.pptx$/i
           @r_officexs << result[1]
         end
       when nil
         case result[2]
-        when /.pdf$/
+        when /.pdf$/i
           @r_pdfs << result[2]
-        when /.doc$/
+        when /.doc$/i
           @r_docs << result[2]
-        when /.docx$|.xlsx$|.pptx$/
+        when /.docx$|.xlsx$|.pptx$/i
           @r_officexs << result[2]
-        when /.txt$/
+        when /.txt$|.rtf$/i
           @r_txts << result[2]
         else
           @r_urls << result[2]

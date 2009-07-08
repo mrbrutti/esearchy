@@ -59,13 +59,13 @@ class Bing
     @totalhits = doc["SearchResponse"]["Web"]["Total"].to_i  if @totalhits == 0
     doc["SearchResponse"]["Web"]["Results"].each do |result|
       case result["Url"]
-      when /.pdf$/
+      when /.pdf$/i
         @r_pdfs << result["Url"]
-      when /.docx$|.xlsx$|.pptx$/
+      when /.docx$|.xlsx$|.pptx$/i
         @r_officexs << result["Url"]
-      when /.doc$/
+      when /.doc$/i
         @r_docs << result["Url"]
-      when /.txt$/
+      when /.txt$|.rtf$/i
         @r_txts << result["Url"]
       else
         @r_urls << result["Url"]

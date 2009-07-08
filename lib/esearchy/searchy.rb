@@ -65,11 +65,12 @@ module Searchy
     #TO BE IMPLEMENTED, feeling lazy ... :) 
   end
     
-  def search_officex(urls)
+  def search_office_xml(urls)
     while urls.size >= 1
       @threads << Thread.new do
         web = URI.parse(urls.pop)
-        puts "Searching in PDF: #{web.to_s}\n"
+        format = web.scan(/docx|xlsx|pptx/i)
+        puts "Searching in #{format.upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -77,7 +78,7 @@ module Searchy
             response = http.request(request)
             case response
             when Net::HTTPSuccess, Net::HTTPRedirection
-              name = "/tmp/#{hash_url(web.to_s)}.docx"
+              name = "/tmp/#{hash_url(web.to_s)}." + format
               open(name, "wb") do |file|
                 file.write(response.body)
               end
@@ -87,7 +88,7 @@ module Searchy
                   search_emails(text)
                 end
               rescue
-                puts "Something went wrong parsing the .docx\n"
+                puts "Something went wrong parsing the .#{format.downcase}\n"
               end
               `rm "#{name}"`
             else
@@ -110,7 +111,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do 
         web = URI.parse(urls.pop)
-        puts "Searching in TXT: #{web.to_s}\n"
+        puts "Searching in #{web.to_s.scan(/txt|rtf/i).upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -171,7 +172,7 @@ module Searchy
   def search_depth
     search_pdfs @r_pdfs
     search_txts @r_txts
-    search_officex @r_officexs
+    search_office_xml @r_officexs
     #search_docs @r_docs
   end
 end
