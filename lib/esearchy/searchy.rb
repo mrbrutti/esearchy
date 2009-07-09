@@ -12,6 +12,13 @@ end
 
 
 module Searchy
+  case RUBY_PLATFORM 
+  when /mingw|mswin/
+    TEMP = "C:\\WINDOWS\\Temp\\"
+  else
+    TEMP = "/tmp/"
+  end    
+  
   def search_emails(string)
     string = string.gsub("<em>","") if self.class == Google #still not sure if this is going to work.
     # OLD regex list = string.scan(/[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?\^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/)
@@ -37,7 +44,7 @@ module Searchy
             response = http.request(request)
             case response
             when Net::HTTPSuccess, Net::HTTPRedirection
-              name = "/tmp/#{hash_url(web.to_s)}.pdf"
+              name = Searchy::TEMP + "#{hash_url(web.to_s)}.pdf"
               open(name, "wb") do |file|
                 file.write(response.body)
               end
@@ -80,7 +87,7 @@ module Searchy
                response = http.request(request)
                case response
                when Net::HTTPSuccess, Net::HTTPRedirection
-                 name = "/tmp/#{hash_url(web.to_s)}.doc"
+                 name = Searchy::TEMP + "#{hash_url(web.to_s)}.doc"
                  open(name, "wb") do |file|
                    file.write(response.body)
                  end
@@ -125,7 +132,7 @@ module Searchy
             response = http.request(request)
             case response
             when Net::HTTPSuccess, Net::HTTPRedirection
-              name = "/tmp/#{hash_url(web.to_s)}." + format
+              name = Searchy::TEMP + "#{hash_url(web.to_s)}." + format
               open(name, "wb") do |file|
                 file.write(response.body)
               end
