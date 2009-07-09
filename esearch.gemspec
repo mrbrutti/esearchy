@@ -1,5 +1,3 @@
-require 'rubygems'
-
 SPEC = Gem::Specification.new do |s| 
   s.name = "esearchy"
   s.version = "0.0.5"
@@ -16,7 +14,7 @@ SPEC = Gem::Specification.new do |s|
   %w{esearchy}.each do |command_line_utility|
     s.executables << command_line_utility
   end
-  #s.require_path = "lib"
+  s.require_path = "lib"
   s.has_rdoc = true 
   s.extra_rdoc_files = ["README.rdoc"] 
   s.add_dependency("pdf/reader", ">= 0.7.5")
