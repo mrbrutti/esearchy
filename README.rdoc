@@ -6,6 +6,7 @@ Esearchy is a small library capable of searching the internet for email addresse
 Also, the library searches inside .pdf, .docx, .xlsx, .pptx, asn and .txt files for emails addresses and adds them to the list of found accounts. Finally, we have support for .docs files but for now only in Windows Platforms.
 
 NOTE: THIS IS STILL BEING DEVELOPED CODE IS SUBMITTED DAILY SO BE AWARE THAT CODE MIGHT NOT WORK PROPERLY AL THE TIME. IF SOMETHING GOES WRONG PLEASE RAISE AN ISSUE.  
+
 In order to work Bing and Yahoo need an appid, for which you will have to create one for each and place them in fles so the library will be able to work properly.
 * data/yahoo.key
 * data/bing.key
@@ -47,16 +48,14 @@ We now also have a LinkedIn search which looks for Names in the site. With those
 * creates emails based on those emails.
 * searches Google and Yahoo for emails related to those people.
 
-  ESearchy.create "domain.co" do |d|
-    d.engines = { "LinkedIn" => Linkedin.new}
-    d.company_name "Domain Corp"
-    d.linkedin_credentials "myuser@linkedin.com", "12345"
-    d.maxhits = 100
-    d.search
-    d.save_to_file "linkedin_emails.txt"
-  end
-
-
+  	ESearchy.create "domain.co" do |d|
+    	d.engines = { "LinkedIn" => Linkedin.new}
+    	d.company_name "Domain Corp"
+    	d.linkedin_credentials "myuser@linkedin.com", "12345"
+    	d.maxhits = 100
+    	d.search
+    	d.save_to_file "linkedin_emails.txt"
+  	end
 
 == REQUIREMENTS:
 
