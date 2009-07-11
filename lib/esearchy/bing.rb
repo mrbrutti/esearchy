@@ -1,6 +1,6 @@
 %w{rubygems json cgi net/http}.each { |lib| require lib }
 local_path = "#{File.dirname(__FILE__)}/"
-%w{searchy keys}.each {|lib| require local_path + lib}
+%w{searchy keys useragent}.each {|lib| require local_path + lib}
 
 class Bing
   include Searchy
@@ -27,7 +27,8 @@ class Bing
       http.start do |http|
         request = Net::HTTP::Get.new("/json.aspx" + "?Appid="+ @appid + 
                                     "&query=" + CGI.escape(query) + 
-                                    "&sources=web&web.count=50&start=#{@start}")
+                                    "&sources=web&web.count=50&start=#{@start}",
+                                    {'Cookie' => UserAgent::fetch})
         response = http.request(request)
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection

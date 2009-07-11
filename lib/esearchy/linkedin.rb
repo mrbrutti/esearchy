@@ -1,31 +1,71 @@
-%w{rubygems cgi net/http}.each { |lib| require lib }
+%w{rubygems cgi net/http net/https}.each { |lib| require lib }
 local_path = "#{File.dirname(__FILE__)}/"
-%w{yahoo google}.each {|lib| require local_path + lib}
+%w{yahoo google useragent}.each {|lib| require local_path + lib}
 
 # http:///
 class Linkedin
   include Searchy
   
-  def initialize(maxhits=nil, start=nil)
+  def initialize(maxhits=nil)
     @totalhits = maxhits || 0
     @pages = 1
     @emails = []
     @lock = Mutex.new
-    @start = start || 0
+    @start = 0
     @threads = []
     @lock = Mutex.new
+    @username = String.new
+    @password = String.new
+    @company_name = nil
+    @cookie = nil
   end
-  attr_accessor :emails, :appid
+  attr_accessor :emails, :username, :password, :company_name
+  
+  def login
+    begin
+      http = Net::HTTP.new("www.linkedin.com",443)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      http.start do |http|
+        request = Net::HTTP::Post.new("/secure/login",
+                                      {'Content-Type' => "application/x-www-form-urlencoded"})
+        request.body = "session_key=#{@username}" +
+                       "&session_password=#{@password}" +
+                       "&session_login=Sign+In&session_login=&session_rikey="
+        response = http.request(request)
+        case response
+        when Net::HTTPSuccess, Net::HTTPRedirection
+          return response['Set-Cookie']
+        else
+          return response.error!
+        end
+      end
+    rescue Net::HTTPFatalError
+      puts "Error: Something went wrong with the HTTP request"
+    end
+  end
   
   def search(query)
     @query = query
+    begin 
+        @cookie = login
+    rescue
+      puts "Unable to parse Linkedin. Something went Wrong with the Credentials"
+      return nil
+    end
     begin
       http = Net::HTTP.new("www.linkedin.com",80)
       http.start do |http|
-        request = Net::HTTP::Get.new("search?search=&company=" + @query + 
+        #request = Net::HTTP::Get.new("/search?search=&viewCriteria=1&currentCompany=co" + 
+        #          "&searchLocationType=Y&newnessType=Y" +
+        #          "&proposalType=Y&pplSearchOrigin=ADVS&company=#{CGI.escape(@company_name)}" +
+        #          "&sortCriteria=Relevance&page_num=#{@pages}", {'Cookie' => @cookie} )
+        headers = {'Cookie' => @cookie, 'User-Agent' => "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_7; en-us) AppleWebKit/530.19.2 (KHTML, like Gecko) Version/4.0.2 Safari/530.19"}
+        request = Net::HTTP::Get.new("/search?search=&company=" + 
+                                     CGI.escape(@company_name) +
                                      "&currentCompany=currentCompany" + 
                                      "&trk=coprofile_in_network_see_more" + 
-                                     "&page_num=" + @pages)
+                                     "&page_num=" + @pages.to_s, headers)
         response = http.request(request)
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection
@@ -34,12 +74,14 @@ class Linkedin
           if @totalhits > @start
             @pages = @pages + 1
             puts "Searching in: #{self.class} up to point #{@start}"
-            create_emails(response.body)
+            search_people(response.body)
+            create_emails
             sleep(4)
             search(@query)
           else
             puts "Searching in: #{self.class} up to point #{@start}"
-            search_emails(response.body)
+            search_people(response.body)
+            create_emails
           end
         else
           return response.error!
@@ -51,25 +93,33 @@ class Linkedin
   end
 
   def parse(string)
-    @totalhits = string.scan(/<p class="summary>"<strong>(\w)<\/strong>/) if @totalhits == 0
+    @totalhits = string.scan(/<p class="summary>"<strong>(.*)<\/strong>/) if @totalhits == 0
   end
   
   def search_people(string)
-    @people = string.scan(/<spam class="given-name">(*.)<\/spam><spam class="family-name">(*.)<\/spam>)/)
+    @people = string.scan(/span class="given-name">(.*)<\/span>[\n\s]+<span class="family-name">(.*)<\/span>/)
   end
   def search_person(name,last)
-    emails = Yahoo.new(50).search("first:\"#{name}\" last:\"#{last}\"").emails
-    emails.concat(Google.new(50).search("#{name} #{last}").emails).uniq!
+    email = []
+    # Search Yahoo
+    y = Yahoo.new(50)
+    y.search("first:\"#{name}\" last:\"#{last}\"")
+    emails.concat(y.emails).uniq!
+    # Search Google
+    #g = Google.new(50)
+    #g.search("#{name} #{last}")
+    #emails.concat(g.emails).uniq!
+    return emails
   end
     
   def create_emails
-    @domain = + @query.match(/@/) ? @query : ("@" + @query)
+    @domain = @query.match(/@/) ? @query : ("@" + @query)
     @people.each do |person|
-      name = person[0]
-      last = person[1] 
-      @emails << name + last + @domain
-      @emails << name[0] + last + @domain
-      @emails.concat(search_person(name,last))
+      name,last = person 
+      @emails << "#{name.split(' ')[0]}.#{last.split(' ')[0]}#{@domain}"
+      @emails << "#{name.first}#{last.split(' ')[0]}#{@domain}"
+      #@emails.concat(fix(search_person(name,last)))
+      @emails.uniq!
     end 
     print_emails(@emails)
   end

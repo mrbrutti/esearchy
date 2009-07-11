@@ -1,6 +1,6 @@
 %w{rubygems cgi net/http}.each { |lib| require lib }
 local_path = "#{File.dirname(__FILE__)}/"
-%w{searchy keys}.each {|lib| require local_path + lib}
+%w{searchy keys useragent}.each {|lib| require local_path + lib}
 
 class Google
   include Searchy
@@ -27,7 +27,8 @@ class Google
       http.start do |http|
         request = Net::HTTP::Get.new( "/cse?&safe=off&num=100&site=" + 
                                        "&q=" + CGI.escape(query) + 
-                                       "&btnG=Search&start=#{@start}")
+                                       "&btnG=Search&start=#{@start}", 
+                                       {'Cookie' => UserAgent::fetch})
         response = http.request(request)
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection

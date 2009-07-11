@@ -1,6 +1,6 @@
 %w{rubygems json cgi net/http}.each { |lib| require lib }
 local_path = "#{File.dirname(__FILE__)}/"
-%w{searchy keys}.each {|lib| require local_path + lib}
+%w{searchy keys useragent}.each {|lib| require local_path + lib}
 
 class Yahoo
   include Searchy
@@ -28,7 +28,7 @@ class Yahoo
         request = Net::HTTP::Get.new("/ysearch/web/v1/" + CGI.escape(query) + 
                                      "?appid="+ @appid + 
                                      "&format=json&count=50"+ 
-                                     "&start=#{@start}" )
+                                     "&start=#{@start}", {'Cookie' => UserAgent::fetch} )
         response = http.request(request)
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection

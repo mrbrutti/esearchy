@@ -1,5 +1,5 @@
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
-%w{google bing yahoo PGP keys}.each { |lib| require local_path + lib } 
+%w{google bing yahoo PGP keys linkedin}.each { |lib| require local_path + lib } 
 
 class ESearchy
   def initialize(options={}, &block)
@@ -9,7 +9,8 @@ class ESearchy
     @engines = options[:engines] || {"Google" => Google, 
                                      "Bing" => Bing, 
                                      "Yahoo" => Yahoo,
-                                     "PGP" => PGP }
+                                     "PGP" => PGP,
+                                     "LinkedIn" => Linkedin }
     @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
     @emails = Array.new
     @threads = Array.new
@@ -53,6 +54,17 @@ class ESearchy
   def bing_key=(value)
     @engines['Bing'].appid = value
   end
+  
+  def linkedin_credentials(user, pass)
+    @engines['LinkedIn'].username = user
+    @engines['LinkedIn'].password = pass
+  end
+  alias_method :linkedin_credentials=, :linkedin_credentials
+  
+  def company_name (company)
+    @engines['LinkedIn'].company_name = company
+  end
+  alias_method :company_name=, :company_name
   
   def save_to_file(file)
     open(file,"a") do |f|
