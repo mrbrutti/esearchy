@@ -9,8 +9,6 @@ if RUBY_PLATFORM =~ /mingw|mswin/
  require local_path + 'wcol'
 end
 
-
-
 module Searchy
   case RUBY_PLATFORM 
   when /mingw|mswin/
@@ -41,7 +39,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do
         web = URI.parse(urls.pop)
-        puts "Searching in PDF: #{web.to_s}\n"
+        ESearchy::LOG.puts "Searching in PDF: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -58,9 +56,9 @@ module Searchy
                 pdf = PDF::Reader.file(name, receiver)
                 search_emails(receiver.content.inspect)
               rescue PDF::Reader::UnsupportedFeatureError
-                puts "Encrypted PDF: Unable to parse it.\n"
+                ESearchy::LOG.puts "Encrypted PDF: Unable to parse it.\n"
               rescue PDF::Reader::MalformedPDFError
-                puts "Malformed PDF: Unable to parse it.\n"
+                ESearchy::LOG.puts "Malformed PDF: Unable to parse it.\n"
               end
               `rm "#{name}"`
             else
@@ -68,34 +66,34 @@ module Searchy
             end
           end
         rescue Net::HTTPFatalError
-          puts "Error: Something went wrong with the HTTP request.\n"
+          ESearchy::LOG.puts "Error: Something went wrong with the HTTP request.\n"
         rescue Net::HTTPServerException
-          puts "Error: Not longer there. 404 Not Found.\n"
+          ESearchy::LOG.puts "Error: Not longer there. 404 Not Found.\n"
         rescue
-          puts "Error: < .. SocketError .. >\n"
+          ESearchy::LOG.puts "Error: < .. SocketError .. >\n"
         end
       end
     end
     @threads.each {|t| t.join } if @threads != nil
   end
   
-  if RUBY_PLATFORM =~ /mingw|mswin/
-    def search_docs(urls)
-      while urls.size >= 1
-         @threads << Thread.new do
-           web = URI.parse(urls.pop)
-           puts "Searching in DOC: #{web.to_s}\n"
-           begin
-             http = Net::HTTP.new(web.host,80)
-             http.start do |http|
-               request = Net::HTTP::Get.new("#{web.path}#{web.query}")
-               response = http.request(request)
-               case response
-               when Net::HTTPSuccess, Net::HTTPRedirection
-                 name = Searchy::TEMP + "#{hash_url(web.to_s)}.doc"
-                 open(name, "wb") do |file|
-                   file.write(response.body)
-                 end
+  def search_docs(urls)
+    while urls.size >= 1
+       @threads << Thread.new do
+         web = URI.parse(urls.pop)
+         ESearchy::LOG.puts "Searching in DOC: #{web.to_s}\n"
+         begin
+           http = Net::HTTP.new(web.host,80)
+           http.start do |http|
+             request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+             response = http.request(request)
+             case response
+             when Net::HTTPSuccess, Net::HTTPRedirection
+               name = Searchy::TEMP + "#{hash_url(web.to_s)}.doc"
+               open(name, "wb") do |file|
+                 file.write(response.body)
+               end
+               if RUBY_PLATFORM =~ /mingw|mswin/
                  begin
                    word = WIN32OLE.new('word.application')
                    word.documents.open(name)
@@ -104,24 +102,40 @@ module Searchy
                    word.activedocument.close( false )
                    word.quit
                  rescue
-                   puts "Something went wrong parsing the .doc}\n"
+                   if File.exists?("C:\\Program Files\\...\antiword.exe")
+                     search_emails(`antiword "#{name}" -f -s`)
+                   else
+                     ESearchy::LOG.puts "Something went wrong parsing the .doc}\n"
+                   end
                  end
-                 `rm "#{name}"`
-               else
-                 return response.error!
-               end
+                elsif RUBY_PLATFORM =~ /linux|darwin/
+                  begin
+                    if File.exists?("/usr/bin/antiword") or 
+                       File.exists?("/usr/local/bin/antiword") or 
+                       File.exists?("/opt/local/bin/antiword")
+                      search_emails(`antiword "#{name}" -f -s`)
+                    end
+                  rescue
+                    ESearchy::LOG.puts "Something went wrong parsing the .doc\n"
+                  end
+                else
+                  ESearchy::LOG.puts "This platform is not currently supported."
+                end
+               `rm "#{name}"`
+             else
+               return response.error!
              end
-           rescue Net::HTTPFatalError
-             puts "Error: Something went wrong with the HTTP request.\n"
-           rescue Net::HTTPServerException
-             puts "Error: Not longer there. 404 Not Found.\n"
-           rescue
-             puts "Error: < .. SocketError .. >\n"
            end
+         rescue Net::HTTPFatalError
+           ESearchy::LOG.puts "Error: Something went wrong with the HTTP request.\n"
+         rescue Net::HTTPServerException
+           ESearchy::LOG.puts "Error: Not longer there. 404 Not Found.\n"
+         rescue
+           ESearchy::LOG.puts "Error: < .. SocketError .. >\n"
          end
        end
-       @threads.each {|t| t.join } if @threads != nil
-    end
+     end
+     @threads.each {|t| t.join } if @threads != nil
   end
   
   def search_office_xml(urls)
@@ -129,7 +143,7 @@ module Searchy
       @threads << Thread.new do
         web = URI.parse(urls.pop)
         format = web.scan(/docx|xlsx|pptx/i)[0]
-        puts "Searching in #{format.upcase}: #{web.to_s}\n"
+        ESearchy::LOG.puts "Searching in #{format.upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -147,7 +161,7 @@ module Searchy
                   search_emails(text)
                 end
               rescue
-                puts "Something went wrong parsing the .#{format.downcase}\n"
+                ESearchy::LOG.puts "Something went wrong parsing the .#{format.downcase}\n"
               end
               `rm "#{name}"`
             else
@@ -155,11 +169,11 @@ module Searchy
             end
           end
         rescue Net::HTTPFatalError
-          puts "Error: Something went wrong with the HTTP request.\n"
+          ESearchy::LOG.puts "Error: Something went wrong with the HTTP request.\n"
         rescue Net::HTTPServerException
-          puts "Error: Not longer there. 404 Not Found.\n"
+          ESearchy::LOG.puts "Error: Not longer there. 404 Not Found.\n"
         rescue
-          puts "Error: < .. SocketError .. >\n"
+          ESearchy::LOG.puts "Error: < .. SocketError .. >\n"
         end
       end
     end
@@ -170,7 +184,7 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do 
         web = URI.parse(urls.pop)
-        puts "Searching in #{web.to_s.scan(/txt|rtf|ans/i)[0].upcase}: #{web.to_s}\n"
+        ESearchy::LOG.puts "Searching in #{web.to_s.scan(/txt|rtf|ans/i)[0].upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
@@ -184,11 +198,11 @@ module Searchy
             end
           end
         rescue Net::HTTPFatalError
-          puts "Error: Something went wrong with the HTTP request\n"
+          ESearchy::LOG.puts "Error: Something went wrong with the HTTP request\n"
         rescue Net::HTTPServerException
-          puts "Error: Not longer there. 404 Not Found.\n"
+          ESearchy::LOG.puts "Error: Not longer there. 404 Not Found.\n"
         rescue
-          puts "Error: < .... >"
+          ESearchy::LOG.puts "Error: < .... >"
         end
       end
     end
@@ -202,18 +216,18 @@ module Searchy
       unless @emails.include?(email)
         unless RUBY_PLATFORM =~ /mingw|mswin/
           if email.match(/#{@query.gsub("@","").split('.')[0]}/)
-            puts "\033[31m" + email + "\033\[0m"
+            ESearchy::LOG.puts "\033[31m" + email + "\033\[0m"
           else
-            puts "\033[32m" + email + "\033\[0m"
+            ESearchy::LOG.puts "\033[32m" + email + "\033\[0m"
           end
         else
           if email.match(/#{@query.gsub("@","").split('.')[0]}/)
             Wcol::color(12)
-            puts email
+            ESearchy::LOG.puts email
             Wcol::color(7)
           else
             Wcol::color(2)
-            puts email
+            ESearchy::LOG.puts email
             Wcol::color(7)
           end
         end

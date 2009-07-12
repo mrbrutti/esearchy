@@ -1,18 +1,29 @@
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
-%w{google bing yahoo PGP keys linkedin}.each { |lib| require local_path + lib } 
+%w{google bing yahoo PGP keys linkedin logger}.each { |lib| require local_path + lib } 
 
 class ESearchy
+  LIBRARY = 1
+  APP = 2
+  
+  LOG = Logger.new(1, $stdout)
+  
+  def log_type=(value)
+    ESearchy::LOG.level = value 
+  end
+  
+  def log_file=(value)
+    ESearchy::LOG.file = value 
+  end
+  
+  DEFAULT_ENGINES = {"Google" => Google, "Bing" => Bing, "Yahoo" => Yahoo,
+                      "PGP" => PGP, "LinkedIn" => Linkedin }
+  
   def initialize(options={}, &block)
     @query = options[:query]
     @depth_search = options[:depth] || true
     @maxhits = options[:maxhits]
-    @engines = options[:engines] || {"Google" => Google, 
-                                     "Bing" => Bing, 
-                                     "Yahoo" => Yahoo,
-                                     "PGP" => PGP,
-                                     "LinkedIn" => Linkedin }
+    @engines = options[:engines] || DEFAULT_ENGINES
     @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
-    @emails = Array.new
     @threads = Array.new
     block.call(self) if block_given?
   end
@@ -21,16 +32,17 @@ class ESearchy
   
   def search(query=nil)
     @engines.each do |n,e|
-      puts "+--- Launching Search for #{n} ---+\n"
+      LOG.puts "+--- Launching Search for #{n} ---+\n"
       e.search(query || @query)
       e.search_depth if depth_search?
-      puts "+--- Finishing Search for #{n} ---+\n"
+      LOG.puts "+--- Finishing Search for #{n} ---+\n"
     end
   end
   
   def emails
+    @emails = []
     @engines.each do |n,e|
-      @emails.concat(e.emails).uniq!
+      @emails.concat(@engines[n].emails).uniq!
     end
     @emails
   end

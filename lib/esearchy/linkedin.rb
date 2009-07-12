@@ -41,7 +41,7 @@ class Linkedin
         end
       end
     rescue Net::HTTPFatalError
-      puts "Error: Something went wrong with the HTTP request"
+      ESearchy::LOG.puts "Error: Something went wrong with the HTTP request"
     end
   end
   
@@ -50,7 +50,7 @@ class Linkedin
     begin 
         @cookie = login
     rescue
-      puts "Unable to parse Linkedin. Something went Wrong with the Credentials"
+      ESearchy::LOG.puts "Unable to parse Linkedin. Something went Wrong with the Credentials"
       return nil
     end
     begin
@@ -60,6 +60,7 @@ class Linkedin
         #          "&searchLocationType=Y&newnessType=Y" +
         #          "&proposalType=Y&pplSearchOrigin=ADVS&company=#{CGI.escape(@company_name)}" +
         #          "&sortCriteria=Relevance&page_num=#{@pages}", {'Cookie' => @cookie} )
+        
         headers = {'Cookie' => @cookie, 'User-Agent' => "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_7; en-us) AppleWebKit/530.19.2 (KHTML, like Gecko) Version/4.0.2 Safari/530.19"}
         request = Net::HTTP::Get.new("/search?search=&company=" + 
                                      CGI.escape(@company_name) +
@@ -73,13 +74,13 @@ class Linkedin
           @start = @start + 10
           if @totalhits > @start
             @pages = @pages + 1
-            puts "Searching in: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching in: #{self.class} up to point #{@start}"
             search_people(response.body)
             create_emails
             sleep(4)
             search(@query)
           else
-            puts "Searching in: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching in: #{self.class} up to point #{@start}"
             search_people(response.body)
             create_emails
           end
@@ -88,7 +89,7 @@ class Linkedin
         end
       end
     rescue Net::HTTPFatalError
-      puts "Error: Something went wrong with the HTTP request"
+      ESearchy::LOG.puts "Error: Something went wrong with the HTTP request"
     end
   end
 

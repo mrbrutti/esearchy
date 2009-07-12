@@ -25,7 +25,7 @@ opts.each do |opt, arg|
   case opt
     when '--help':
       # BEGIN OF HELP
-      puts "\nHELP for Esearchy\n---------------------\n
+      ESearchy::LOG.puts "\nHELP for Esearchy\n---------------------\n
       --help, -h
       \tWell I guess you know what this is for (To obtain this Help).\n
       --domain, -d [domain.com]
@@ -47,7 +47,7 @@ opts.each do |opt, arg|
           @domains << line
         end
       else
-        puts "File not found"
+        ESearchy::LOG.puts "File not found"
       end
     when '--yahoo_key':
       @yahoo_key = arg
@@ -60,7 +60,7 @@ opts.each do |opt, arg|
     when '--maxhits':
       @maxhits = arg
     else
-      puts "Unknown command. Please try again"
+      ESearchy::LOG.puts "Unknown command. Please try again"
       exit(0)
   end
 end

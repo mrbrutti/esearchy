@@ -34,12 +34,12 @@ class Google
           parse(response.body)
           @start = @start + 100
           if @totalhits > @start
-            puts "Searching in URL: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching in URL: #{self.class} up to point #{@start}"
             search_emails(response.body)
             sleep(4)
             search(query)
           else
-            puts "Searching in URL: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching in URL: #{self.class} up to point #{@start}"
             search_emails(response.body)
           end
         else
@@ -47,7 +47,7 @@ class Google
         end
       end
     rescue Net::HTTPFatalError
-      puts "Error: Something went wrong with the HTTP request"
+      ESearchy::LOG.puts "Error: Something went wrong with the HTTP request"
     end
   end
   
@@ -80,7 +80,7 @@ class Google
           @r_urls << result[2]
         end
       else
-        puts "I do not parse the #{result[0]} filetype yet:)"
+        ESearchy::LOG.puts "I do not parse the #{result[0]} filetype yet:)"
       end
     end
   end

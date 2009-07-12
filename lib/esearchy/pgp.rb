@@ -16,14 +16,14 @@ class PGP
         response = http.request(request)
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection
-          puts "Searching #{self.class}"
+          ESearchy::LOG.puts "Searching #{self.class}"
           search_emails(response.body)
         else
           return response.error!
         end
       end
     rescue Net::HTTPFatalError
-      puts "Error: Something went wrong with the HTTP request"
+      ESearchy::LOG.puts "Error: Something went wrong with the HTTP request"
     end
   end
 end

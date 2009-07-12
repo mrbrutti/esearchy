@@ -35,12 +35,12 @@ class Yahoo
           parse(response.body)
           @start = @start + 50
           if @totalhits > @start
-            puts "Searching in URL: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching in URL: #{self.class} up to point #{@start}"
             search_emails(response.body)
             sleep(4)
             search(@query)
           else
-            puts "Searching in URL: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching in URL: #{self.class} up to point #{@start}"
             search_emails(response.body)
           end
         else
@@ -48,7 +48,7 @@ class Yahoo
         end
       end
     rescue Net::HTTPFatalError
-      puts "Error: Something went wrong with the HTTP request"
+      ESearchy::LOG.puts "Error: Something went wrong with the HTTP request"
     end
   end
 
