@@ -48,13 +48,27 @@ We now also have a LinkedIn search which looks for Names in the site. With those
 * creates emails based on those emails.
 * searches Google and Yahoo for emails related to those people.
 
-  ESearchy.create "domain.co" do |d|
+  ESearchy.create "domain.com" do |d|
     d.engines = { "LinkedIn" => Linkedin.new}
     d.company_name "Domain Corp"
     d.linkedin_credentials "myuser@linkedin.com", "12345"
     d.maxhits = 100
     d.search
     d.save_to_file "linkedin_emails.txt"
+  end
+
+Not short of that now, we also have the possibility of choosing between a Library output mode (no output to IO) and an APP mode (Old output mode). It's important to mention that the default output mode is LIBRARY
+
+  require 'esearchy'
+  ESearchy::LOG.level = ESearchy::APP
+
+  ESearchy.create "domain.com" do |d|
+    d.yahoo_key = "dsdsdsdsdsdsdsd"
+    d.bing_key = "dsdsdsdsdsdsdsdsd"
+    d.company_name "Domain Corp"
+    d.linkedin_credentials "myuser@linkedin.com", "12345"
+    d.maxhits = 500
+    d.search
   end
 
 == REQUIREMENTS:
