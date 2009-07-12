@@ -4,6 +4,9 @@
 Esearchy is a small library capable of searching the internet for email addresses. Currently, the supported search methods are engines such as Google, Bing, Yahoo, PGP servers, GoogleGroups, Linkedin, etc , but I intend to add many more.
 
 Also, the library searches inside .pdf, .docx, .xlsx, .pptx, asn and .txt files for emails addresses and adds them to the list of found accounts. Finally, we have support for .docs files but for now only in Windows Platforms.
+In order to parse Microsoft Word (.doc):
+* You Either need a windows Platform with Word installed.
+* Install AntiWord. ( http://www.winfield.demon.nl/ )
 
 NOTE: THIS IS STILL BEING DEVELOPED CODE IS SUBMITTED DAILY SO BE AWARE THAT CODE MIGHT NOT WORK PROPERLY AL THE TIME. IF SOMETHING GOES WRONG PLEASE RAISE AN ISSUE.  
 
