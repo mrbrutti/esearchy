@@ -51,8 +51,9 @@ class GoogleGroups
   end
   
   def parse(html)
-    @totalhits= html.scan(/<\/b> of about <b>(.*)<\/b> for /)[0][0].gsub(",","").to_i  if @totalhits == 0
-    html.scan(/<div class=g align="left"><a href="([0-9A-Za-z:\\\/?&=@+%.;"'()_-]+)" target=""/).each do |result|
+    @totalhits=html.scan(/<\/b> of about <b>(.*)<\/b> for /)[0][0].gsub(",","").to_i if @totalhits == 0
+    html.scan(/<div class=g align="left">\
+<a href="([0-9A-Za-z:\\\/?&=@+%.;"'()_-]+)" target=""/).each do |result|
       case result[0]
       when /.pdf$/i
         @r_pdfs << result[0]

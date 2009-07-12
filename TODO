@@ -5,14 +5,21 @@ TO DO
    |-->  Now it reads .docx,.xlsx,.pptx.
    |-->  Now it reads .docs but only in Windows, linux comming soon.
 	 
-- make it windows compatible. (Still have to test it on windows)
+- [WORK IN PROGRESS] make it windows compatible. (Still have to test it on windows)
 - [PARTIALLY COMPLETED] Implement a better way to read the AppID keys for yahoo and Bing. 
 - [COMPLETED] Make it possible to suppy the total of desires hits. 
 - [COMPLETED] Implement a more open regex that will cover cases such as  
 		- user @ domain.com, 
 		- user at domain.com
 		- user at domain dot com
-- Add LinkedIn Support and other social network sites
+		- [BUG] It returns some strings that are not emails. 
+		        Checking regext to fine-tune it to avoid this false pasitivs
+		
+- [COMPLETED] Add LinkedIn Support.
   		- Fetch results into Yahoo People to obtain possible emails accounts.
-- Add Random User-Agent support for Search Engines to prevent from being banned. 
+		[SOLVED][BUG] - This will return the users' vcard. Need to find some way to fix this.
+		
+- Add other social network sites ( I need to research on this)
+- 
+- [COMPLETED] Add Random User-Agent support for Search Engines to prevent from being banned. 
 - Add Random sleep times to avoid being banned. 

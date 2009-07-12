@@ -97,7 +97,8 @@ class Linkedin
   end
   
   def search_people(string)
-    @people = string.scan(/span class="given-name">(.*)<\/span>[\n\s]+<span class="family-name">(.*)<\/span>/)
+    @people = string.scan(/title="View profile">[\n\s]+<span class="given-name">(.*)<\/span>\
+[\n\s]+<span class="family-name">(.*)<\/span>/)
   end
   def search_person(name,last)
     email = []

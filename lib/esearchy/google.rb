@@ -17,7 +17,6 @@ class Google
     @lock = Mutex.new
     @threads = []
   end
-  
   attr_accessor :emails
   
   def search(query)
@@ -53,8 +52,10 @@ class Google
   end
   
   def parse(html)
-    @totalhits= html.scan(/<\/b> of about <b>(.*)<\/b> for /)[0][0].gsub(",","").to_i  if @totalhits == 0
-    html.scan(/<div class=g><span class="b w xsm">\[([A-Z]+)\]<\/span> <h2 class=r><a href="([0-9A-Za-z:\\\/?&=@+%.;"'()_-]+)"|<h2 class=r><a href="([0-9A-Za-z:\\\/?&=@+%.;"'()_-]+)"/).each do |result|
+    @totalhits= html.scan(/<\/b> of about <b>(.*)<\/b> for /)[0][0].gsub(",","").to_i if @totalhits == 0
+    html.scan(/<div class=g><span class="b w xsm">\[([A-Z]+)\]<\/span> <h2 class=r><a href="\
+([0-9A-Za-z:\\\/?&=@+%.;"'()_-]+)"|<h2 class=r><a href="\
+([0-9A-Za-z:\\\/?&=@+%.;"'()_-]+)"/).each do |result|
       case result[0]
       when /PDF/
         @r_pdfs << result[1]
