@@ -1,5 +1,5 @@
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
-%w{google bing yahoo PGP keys linkedin logger}.each { |lib| require local_path + lib } 
+%w{google bing yahoo pgp keys linkedin logger}.each { |lib| require local_path + lib } 
 
 class ESearchy
   LIBRARY = 1
