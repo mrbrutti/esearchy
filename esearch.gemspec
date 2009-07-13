@@ -1,16 +1,16 @@
 SPEC = Gem::Specification.new do |s| 
   s.name = "esearchy"
-  s.version = "0.0.9"
+  s.version = "0.0.10"
   s.author = "Matias P. Brutti"
   s.email = "matiasbrutti@gmail.com"
   s.homepage = "http://freedomcoder.com.ar/esearchy"
   s.platform = Gem::Platform::RUBY
   s.summary = "A library to search for emails in search engines"
-  s.files = ["esearchy.rb","bin", "bin/esearchy", "data", "data/bing.key", "data/yahoo.key", "lib", "lib/esearchy.rb",
-             "lib/esearchy", "lib/esearchy/bing.rb", "lib/esearchy/google.rb", 
+  s.files = ["esearchy.rb","bin", "bin/esearchy", "data", "data/bing.key", "data/yahoo.key", "lib", 
+             "lib/esearchy.rb","lib/esearchy", "lib/esearchy/bing.rb", "lib/esearchy/google.rb", 
              "lib/esearchy/googlegroups.rb", "lib/esearchy/keys.rb", "lib/esearchy/linkedin.rb",
              "lib/esearchy/pdf2txt.rb", "lib/esearchy/pgp.rb", "lib/esearchy/searchy.rb",
-             "lib/esearchy/yahoo.rb","lib/esearchy/wcol.rb"]
+             "lib/esearchy/yahoo.rb","lib/esearchy/wcol.rb","lib/esearchy/useragent.rb"]
   %w{esearchy}.each do |command_line_utility|
     s.executables << command_line_utility
   end
