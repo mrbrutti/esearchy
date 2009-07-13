@@ -40,11 +40,11 @@ class ESearchy
   end
   
   def emails
-    @emails = []
+    emails = []
     @engines.each do |n,e|
-      @emails.concat(@engines[n].emails).uniq!
+      emails.concat(@engines[n].emails).uniq!
     end
-    @emails
+    emails
   end
   
   def clean(&block)

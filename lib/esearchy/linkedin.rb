@@ -2,7 +2,6 @@
 local_path = "#{File.dirname(__FILE__)}/"
 %w{yahoo google useragent}.each {|lib| require local_path + lib}
 
-# http:///
 class Linkedin
   include Searchy
   
@@ -61,7 +60,7 @@ class Linkedin
         #          "&proposalType=Y&pplSearchOrigin=ADVS&company=#{CGI.escape(@company_name)}" +
         #          "&sortCriteria=Relevance&page_num=#{@pages}", {'Cookie' => @cookie} )
         
-        headers = {'Cookie' => @cookie, 'User-Agent' => "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_7; en-us) AppleWebKit/530.19.2 (KHTML, like Gecko) Version/4.0.2 Safari/530.19"}
+        headers = {'Cookie' => @cookie, 'User-Agent' => UserAgent::fetch}
         request = Net::HTTP::Get.new("/search?search=&company=" + 
                                      CGI.escape(@company_name) +
                                      "&currentCompany=currentCompany" + 
@@ -119,7 +118,7 @@ class Linkedin
     @people.each do |person|
       name,last = person 
       @emails << "#{name.split(' ')[0]}.#{last.split(' ')[0]}#{@domain}"
-      @emails << "#{name.first}#{last.split(' ')[0]}#{@domain}"
+      @emails << "#{name[0,1]}#{last.split(' ')[0]}#{@domain}"
       #@emails.concat(fix(search_person(name,last)))
       @emails.uniq!
     end 

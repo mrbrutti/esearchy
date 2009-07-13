@@ -1,11 +1,7 @@
 TO DO
 -----
 
-- [Partially] Implement the .doc search using the Platform and the win32api in windows. 
-   |-->  Now it reads .docx,.xlsx,.pptx.
-   |-->  Now it reads .docs but only in Windows, linux comming soon.
-	 
-- [WORK IN PROGRESS] make it windows compatible. (Still have to test it on windows)
+GLOBAL:
 - [PARTIALLY COMPLETED] Implement a better way to read the AppID keys for yahoo and Bing. 
 - [COMPLETED] Make it possible to suppy the total of desires hits. 
 - [COMPLETED] Implement a more open regex that will cover cases such as  
@@ -23,3 +19,13 @@ TO DO
 - 
 - [COMPLETED] Add Random User-Agent support for Search Engines to prevent from being banned. 
 - Add Random sleep times to avoid being banned. 
+LINUX/UNIX/OSX:
+- [COMPLETED] Add support for .doc in unix platforms.
+WINDOWS:
+- [Partially] Implement the .doc search using the Platform and the win32api in windows. 
+   |-->  Now it reads .docx,.xlsx,.pptx.
+   |-->  Now it reads .docs but only in Windows, linux comming soon.
+- [WORK IN PROGRESS] make it windows compatible. (Still have to test it on windows)
+- [FIXED][BUG] Windows Vista with Ruby One click installer 3.0 does not support String.first so now
+               we use String[range] (name[0,1])
+
