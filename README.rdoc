@@ -1,7 +1,7 @@
 = Esearch
 
 == DESCRIPTION
-Esearchy is a small library capable of searching the internet for email addresses. Currently, the supported search methods are engines such as Google, Bing, Yahoo, PGP servers, GoogleGroups, Linkedin, etc , but I intend to add many more.
+Esearchy is a small library capable of searching the internet for email addresses. Currently, the supported search methods are engines such as Google, Bing, Yahoo, PGP servers, GoogleGroups, LinkedIn, etc , but I intend to add many more.
 
 Also, the library searches inside .pdf, .docx, .xlsx, .pptx, asn and .txt files for emails addresses and adds them to the list of found accounts. Finally, we have support for .docs files but for now only in Windows Platforms.
 In order to parse Microsoft Word (.doc):
@@ -52,7 +52,7 @@ We now also have a LinkedIn search which looks for Names in the site. With those
 * searches Google and Yahoo for emails related to those people.
 
   ESearchy.create "domain.com" do |d|
-    d.engines = { "LinkedIn" => Linkedin.new}
+    d.engines = { "LinkedIn" => LinkedIn.new}
     d.company_name "Domain Corp"
     d.linkedin_credentials "myuser@linkedin.com", "12345"
     d.maxhits = 100

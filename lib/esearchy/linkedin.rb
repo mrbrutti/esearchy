@@ -2,7 +2,7 @@
 local_path = "#{File.dirname(__FILE__)}/"
 %w{yahoo google useragent}.each {|lib| require local_path + lib}
 
-class Linkedin
+class LinkedIn
   include Searchy
   
   def initialize(maxhits=nil)
@@ -49,7 +49,7 @@ class Linkedin
     begin 
         @cookie = login
     rescue
-      ESearchy::LOG.puts "Unable to parse Linkedin. Something went Wrong with the Credentials"
+      ESearchy::LOG.puts "Unable to parse LinkedIn. Something went Wrong with the Credentials"
       return nil
     end
     begin

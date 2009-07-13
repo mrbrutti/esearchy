@@ -8,15 +8,15 @@ class ESearchy
   LOG = Logger.new(1, $stdout)
   
   def log_type=(value)
-    ESearchy::LOG.level = value 
+    ESearchy::LOG.level = value
   end
   
   def log_file=(value)
-    ESearchy::LOG.file = value 
+    ESearchy::LOG.file = value
   end
   
   DEFAULT_ENGINES = {"Google" => Google, "Bing" => Bing, "Yahoo" => Yahoo,
-                      "PGP" => PGP, "LinkedIn" => Linkedin }
+                      "PGP" => PGP, "LinkedIn" => LinkedIn }
   
   def initialize(options={}, &block)
     @query = options[:query]
@@ -77,6 +77,27 @@ class ESearchy
     @engines['LinkedIn'].company_name = company
   end
   alias_method :company_name=, :company_name
+  
+  def search_engine(key, value)
+    if [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups].include?(key)
+      if value == true 
+        unless @engines[key.to_s]
+          @engines[key.to_s] = instance_eval "#{key}.new(@maxhits)"
+        end
+      elsif value == false
+        @engines.delete(key.to_s)
+      end
+    else
+      raise(ArgumentError, "No plugin with that Key")
+    end
+  end
+  
+  %w{Google Bing Yahoo PGP LinkedIn GoogleGroups}.each do |engine|
+    class_eval "
+      def search_#{engine}=(value)
+        search_engine :#{engine}, value
+      end"
+  end
   
   def save_to_file(file)
     open(file,"a") do |f|
