@@ -10,7 +10,8 @@ SPEC = Gem::Specification.new do |s|
              "lib/esearchy.rb","lib/esearchy", "lib/esearchy/bing.rb", "lib/esearchy/google.rb", 
              "lib/esearchy/googlegroups.rb", "lib/esearchy/keys.rb", "lib/esearchy/linkedin.rb",
              "lib/esearchy/pdf2txt.rb", "lib/esearchy/pgp.rb", "lib/esearchy/searchy.rb",
-             "lib/esearchy/yahoo.rb","lib/esearchy/wcol.rb","lib/esearchy/useragent.rb"]
+             "lib/esearchy/yahoo.rb","lib/esearchy/wcol.rb","lib/esearchy/useragent.rb",
+             "lib/esearchy/logger.rb"]
   %w{esearchy}.each do |command_line_utility|
     s.executables << command_line_utility
   end
