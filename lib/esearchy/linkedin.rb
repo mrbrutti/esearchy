@@ -5,8 +5,8 @@ local_path = "#{File.dirname(__FILE__)}/"
 class LinkedIn
   include Searchy
   
-  def initialize(maxhits=nil)
-    @totalhits = maxhits || 0
+  def initialize(maxhits = 0)
+    @totalhits = maxhits
     @pages = 1
     @emails = []
     @lock = Mutex.new

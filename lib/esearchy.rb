@@ -15,14 +15,23 @@ class ESearchy
     ESearchy::LOG.file = value
   end
   
-  DEFAULT_ENGINES = {"Google" => Google, "Bing" => Bing, "Yahoo" => Yahoo,
-                      "PGP" => PGP, "LinkedIn" => LinkedIn }
+  def eng(arr)
+    hsh = {}; arr.each {|e| hsh[e] = instance_eval "#{e}"}; hsh
+  end
+  
+  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn]
   
   def initialize(options={}, &block)
     @query = options[:query]
     @depth_search = options[:depth] || true
-    @maxhits = options[:maxhits]
-    @engines = options[:engines] || DEFAULT_ENGINES
+    @maxhits = options[:maxhits] || 0
+    @engines = options[:engines] ? eng(options[:engines]) : 
+                                   { :Google => Google, 
+                                     :Bing => Bing, 
+                                     :Yahoo => Yahoo,
+                                     :PGP => PGP, 
+                                     :LinkedIn => LinkedIn }
+                                     
     @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
     @threads = Array.new
     block.call(self) if block_given?
@@ -60,32 +69,32 @@ class ESearchy
   end
   
   def yahoo_key=(value)
-    @engines['Yahoo'].appid = value
+    @engines[:Yahoo].appid = value
   end
   
   def bing_key=(value)
-    @engines['Bing'].appid = value
+    @engines[:Bing].appid = value
   end
   
   def linkedin_credentials(user, pass)
-    @engines['LinkedIn'].username = user
-    @engines['LinkedIn'].password = pass
+    @engines[:LinkedIn].username = user
+    @engines[:LinkedIn].password = pass
   end
   alias_method :linkedin_credentials=, :linkedin_credentials
   
   def company_name(company)
-    @engines['LinkedIn'].company_name = company
+    @engines[:LinkedIn].company_name = company
   end
   alias_method :company_name=, :company_name
   
   def search_engine(key, value)
     if [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups].include?(key)
       if value == true 
-        unless @engines[key.to_s]
-          @engines[key.to_s] = instance_eval "#{key}.new(@maxhits)"
+        unless @engines[key]
+          @engines[key] = instance_eval "#{key}.new(@maxhits)"
         end
       elsif value == false
-        @engines.delete(key.to_s)
+        @engines.delete(key)
       end
     else
       raise(ArgumentError, "No plugin with that Key")

@@ -105,8 +105,10 @@ module Searchy
                    if File.exists?("C:\\antiword\\antiword.exe")
                      search_emails(`C:\\antiword\\antiword.exe "#{name}" -f -s`)
                    else
-                     ESearchy::LOG.puts "You need to install either Microsoft Word or Antiword 
-                                          to parse .docs"
+                      # This G h e t t o but, for now it works on emails 
+                      # that do not contain Capital letters:)
+                      ESearchy::LOG.puts "M$ Word|Antiword are not installed. Using the Ghetto way."
+                      search_emails( File.open(name).readlines[0..19].to_s )
                    end
                  end
                 elsif RUBY_PLATFORM =~ /linux|darwin/
@@ -116,7 +118,10 @@ module Searchy
                        File.exists?("/opt/local/bin/antiword")
                       search_emails(`antiword "#{name}" -f -s`)
                     else
-                      ESearchy::LOG.puts "You need to install Antiword to parse .docs"
+                      # This G h e t t o but, for now it works on emails 
+                      # that do not contain Capital letters:)
+                      ESearchy::LOG.puts "Antiword is not installed. Using the Ghetto way."
+                      search_emails( File.open(name).readlines[0..19].to_s )
                     end
                   rescue
                     ESearchy::LOG.puts "Something went wrong parsing the .doc\n"

@@ -43,7 +43,7 @@ For thouse who want to integrate this to their application you can use it in "th
 
 or in the more classic way in which you can create an Esearchy objetc and work on it
 
-  domain = Esearchy.new :query => "domain.com", :maxhits => 500
+  domain = Esearchy.new :query => "domain.com", :maxhits => 500, :engines => [:Google,:Yahoo]
   domain.search 
   domain.save_to_file "~/emails.txt"
 

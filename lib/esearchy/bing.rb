@@ -5,12 +5,12 @@ local_path = "#{File.dirname(__FILE__)}/"
 class Bing
   include Searchy
   
-  def initialize(maxhits = nil, appid=nil, start=nil)
+  def initialize(maxhits=0, appid=nil, start=0)
     @appid = appid || Keys::BING_APP_KEY
-    @start = start || 0
+    @start = start
     @emails = []
     @threads = []
-    @totalhits = maxhits || 0
+    @totalhits = maxhits
     @r_urls = Queue.new
     @r_docs = Queue.new
     @r_pdfs = Queue.new

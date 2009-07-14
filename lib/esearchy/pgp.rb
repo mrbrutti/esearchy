@@ -1,12 +1,11 @@
 class PGP
   include Searchy
   
-  def initialize(maxhits=nil)
+  def initialize(maxhits=0)
+    @totalhits = maxhits
     @emails = []
-    @lock = Mutex.new
-    @threads = []
   end
-  attr_accessor :emails
+  
   def search(query)
     @query = query
     http = Net::HTTP.new("pgp.mit.edu",11371)
@@ -26,4 +25,13 @@ class PGP
       ESearchy::LOG.puts "Error: Something went wrong with the HTTP request"
     end
   end
+  
+  def emails
+    maxhits == 0 ? emails : emails[0..@totalhits]
+  end
+  
+  def emails=(value)
+    emails = value
+  end
+  
 end

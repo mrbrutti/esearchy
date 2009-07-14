@@ -5,10 +5,10 @@ local_path = "#{File.dirname(__FILE__)}/"
 class Yahoo
   include Searchy
   
-  def initialize(maxhits = nil, appid=nil, start=nil )
+  def initialize(maxhits=0, appid = nil, start=0)
     @appid = appid || Keys::YAHOO_APP_KEY
-    @start = start || 0
-    @totalhits = maxhits || 0
+    @start = start
+    @totalhits = maxhits
     @emails = []
     @r_urls = Queue.new
     @r_docs = Queue.new

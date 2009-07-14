@@ -5,9 +5,9 @@ local_path = "#{File.dirname(__FILE__)}/"
 class Google
   include Searchy
   
-  def initialize(maxhits = nil, start = nil)
-    @start = start || 0
-    @totalhits = maxhits || 0
+  def initialize(maxhits = 0, start = 0)
+    @start = start
+    @totalhits = maxhits
     @emails = []
     @r_urls = Queue.new
     @r_docs = Queue.new

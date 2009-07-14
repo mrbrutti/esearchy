@@ -19,8 +19,12 @@ GLOBAL:
 - 
 - [COMPLETED] Add Random User-Agent support for Search Engines to prevent from being banned. 
 - Add Random sleep times to avoid being banned. 
+
 LINUX/UNIX/OSX:
-- [COMPLETED] Add support for .doc in unix platforms.
+- [COMPLETED] Add support for .doc in unix platforms. (Through antiword) It would be nice to take a
+              look at the implementation and see if we can create a method to read files, independently
+              antiword. 
+
 WINDOWS:
 - [Partially] Implement the .doc search using the Platform and the win32api in windows. 
    |-->  Now it reads .docx,.xlsx,.pptx.
