@@ -59,7 +59,7 @@ class Yahoo
       case result["url"]
       when /.pdf$/i
         @r_pdfs << result["url"]
-      when /.docx$|.xlsx$|.pptx$/i
+      when /.docx$|.xlsx$|.pptx$|.odt$|.odp$|.ods$|.odb$/i
         @r_officexs << result["url"]
       when /.doc$/i
         @r_docs << result["url"]

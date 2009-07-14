@@ -62,7 +62,7 @@ class Bing
       case result["Url"]
       when /.pdf$/i
         @r_pdfs << result["Url"]
-      when /.docx$|.xlsx$|.pptx$/i
+      when /.docx$|.xlsx$|.pptx$|.odt$|.odp$|.ods$|.odb$/i
         @r_officexs << result["Url"]
       when /.doc$/i
         @r_docs << result["Url"]

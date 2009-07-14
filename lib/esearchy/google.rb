@@ -63,7 +63,7 @@ class Google
         case result[1]
         when /.doc$/i
           @r_docs << result[1]
-        when /.docx$|.xlsx$|.pptx$/i
+        when /.docx$|.xlsx$|.pptx$|.odt$|.odp$|.ods$|.odb$/i
           @r_officexs << result[1]
         end
       when nil
@@ -72,7 +72,7 @@ class Google
           @r_pdfs << result[2]
         when /.doc$/i
           @r_docs << result[2]
-        when /.docx$|.xlsx$|.pptx$/i
+        when /.docx$|.xlsx$|.pptx$|.odt$|.odp$|.ods$|.odb$/i
           @r_officexs << result[2]
         when /.txt$|.rtf$|ans$/i
           @r_txts << result[2]

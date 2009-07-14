@@ -102,10 +102,11 @@ module Searchy
                    word.activedocument.close( false )
                    word.quit
                  rescue
-                   if File.exists?("C:\\Program Files\\...\antiword.exe")
-                     search_emails(`antiword "#{name}" -f -s`)
+                   if File.exists?("C:\\antiword\\antiword.exe")
+                     search_emails(`C:\\antiword\\antiword.exe "#{name}" -f -s`)
                    else
-                     ESearchy::LOG.puts "Something went wrong parsing the .doc}\n"
+                     ESearchy::LOG.puts "You need to install either Microsoft Word or Antiword 
+                                          to parse .docs"
                    end
                  end
                 elsif RUBY_PLATFORM =~ /linux|darwin/
@@ -114,6 +115,8 @@ module Searchy
                        File.exists?("/usr/local/bin/antiword") or 
                        File.exists?("/opt/local/bin/antiword")
                       search_emails(`antiword "#{name}" -f -s`)
+                    else
+                      ESearchy::LOG.puts "You need to install Antiword to parse .docs"
                     end
                   rescue
                     ESearchy::LOG.puts "Something went wrong parsing the .doc\n"
@@ -142,7 +145,8 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do
         web = URI.parse(urls.pop)
-        format = web.scan(/docx|xlsx|pptx/i)[0]
+        #format = web.scan(/docx|xlsx|pptx/i)[0]
+        format = web.scan(/docx|xlsx|pptx|odt|odp|ods|odb/i)[0]
         ESearchy::LOG.puts "Searching in #{format.upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)

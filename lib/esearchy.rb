@@ -73,7 +73,7 @@ class ESearchy
   end
   alias_method :linkedin_credentials=, :linkedin_credentials
   
-  def company_name (company)
+  def company_name(company)
     @engines['LinkedIn'].company_name = company
   end
   alias_method :company_name=, :company_name
