@@ -1,6 +1,6 @@
 SPEC = Gem::Specification.new do |s| 
   s.name = "esearchy"
-  s.version = "0.0.17"
+  s.version = "0.0.18"
   s.author = "Matias P. Brutti"
   s.email = "matiasbrutti@gmail.com"
   s.homepage = "http://freedomcoder.com.ar/esearchy"
@@ -12,7 +12,7 @@ SPEC = Gem::Specification.new do |s|
              "lib/esearchy/pdf2txt.rb", "lib/esearchy/pgp.rb", "lib/esearchy/searchy.rb",
              "lib/esearchy/yahoo.rb","lib/esearchy/wcol.rb","lib/esearchy/useragent.rb",
              "lib/esearchy/logger.rb", "lib/esearchy/bugmenot.rb"]
-  %w{esearchy}.each do |command_line_utility|
+  %w{bin/esearchy}.each do |command_line_utility|
     s.executables << command_line_utility
   end
   s.require_path = "lib"
