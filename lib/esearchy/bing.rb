@@ -27,7 +27,7 @@ class Bing
       http.start do |http|
         request = Net::HTTP::Get.new("/json.aspx" + "?Appid="+ @appid + 
                                     "&query=" + CGI.escape(query) + 
-                                    "&sources=web&web.count=50&start=#{@start}",
+                                    "&sources=web&web.count=50&web.offset=#{@start}",
                                     {'Cookie' => UserAgent::fetch})
         response = http.request(request)
         case response

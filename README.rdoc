@@ -69,7 +69,7 @@ Not short of that now, we also have the possibility of choosing between a Librar
     d.yahoo_key = "dsdsdsdsdsdsdsd"
     d.bing_key = "dsdsdsdsdsdsdsdsd"
     d.company_name "Domain Corp"
-    d.linkedin_credentials "myuser@linkedin.com", "12345"
+    d.linkedin_credentials "myuser@linkedin.com", "12345" # or use the constant ESearch::BUGMENOT
     d.maxhits = 500
     d.search
   end

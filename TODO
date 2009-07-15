@@ -16,7 +16,7 @@ GLOBAL:
 		[SOLVED][BUG] - This will return the users' vcard. Need to find some way to fix this.
 		
 - Add other social network sites ( I need to research on this)
-- 
+- [COMPLETED] Added BugMeNot class that allows uses to fetch from bug_me_not user credentials.
 - [COMPLETED] Add Random User-Agent support for Search Engines to prevent from being banned. 
 - Add Random sleep times to avoid being banned. 
 

@@ -1,11 +1,17 @@
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
-%w{google bing yahoo pgp keys linkedin logger}.each { |lib| require local_path + lib } 
+%w{google googlegroups bing yahoo pgp keys 
+   linkedin logger bugmenot}.each { |lib| require local_path + lib } 
 
 class ESearchy
+  #Constants 
+  
   LIBRARY = 1
   APP = 2
   
   LOG = Logger.new(1, $stdout)
+  BUGMENOT = BMN::fetch_user
+  
+  #End Constants
   
   def log_type=(value)
     ESearchy::LOG.level = value
@@ -76,9 +82,17 @@ class ESearchy
     @engines[:Bing].appid = value
   end
   
-  def linkedin_credentials(user, pass)
-    @engines[:LinkedIn].username = user
-    @engines[:LinkedIn].password = pass
+  def linkedin_credentials(*args)
+    if args.size == 2
+      @engines[:LinkedIn].username = args[0]
+      @engines[:LinkedIn].password = args[1]
+      return true
+    elsif args.size ==1
+      @engines[:LinkedIn].username = args[0][0]
+      @engines[:LinkedIn].password = args[0][1]
+      return true
+    end
+    false
   end
   alias_method :linkedin_credentials=, :linkedin_credentials
   
