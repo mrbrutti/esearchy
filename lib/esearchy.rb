@@ -9,7 +9,7 @@ class ESearchy
   APP = 2
   
   LOG = Logger.new(1, $stdout)
-  BUGMENOT = BMN::fetch_user
+  BUGMENOT = BMN::fetch_user("linkedin.com")
   
   #End Constants
   
