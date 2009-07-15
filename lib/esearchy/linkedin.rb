@@ -1,6 +1,6 @@
 %w{rubygems cgi net/http net/https}.each { |lib| require lib }
 local_path = "#{File.dirname(__FILE__)}/"
-%w{yahoo google useragent}.each {|lib| require local_path + lib}
+%w{searchy yahoo google useragent}.each {|lib| require local_path + lib}
 
 class LinkedIn
   include Searchy

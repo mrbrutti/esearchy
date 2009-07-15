@@ -1,3 +1,7 @@
+%w{cgi net/http}.each { |lib| require lib }
+local_path = "#{File.dirname(__FILE__)}/"
+%w{searchy useragent}.each {|lib| require local_path + lib}
+
 class PGP
   include Searchy
   
@@ -12,7 +16,8 @@ class PGP
     http = Net::HTTP.new("pgp.mit.edu",11371)
     begin
       http.start do |http|
-        request = Net::HTTP::Get.new( "/pks/lookup?search=#{@query}")
+        request = Net::HTTP::Get.new( "/pks/lookup?search=#{@query}",
+                                      {'Cookie' => UserAgent::fetch})
         response = http.request(request)
         case response
         when Net::HTTPSuccess, Net::HTTPRedirection
@@ -28,7 +33,7 @@ class PGP
   end
   
   def emails
-    maxhits == 0 ? emails : emails[0..@totalhits]
+    @totalhits == 0 ? emails : emails[0..@totalhits]
   end
   
   def emails=(value)
