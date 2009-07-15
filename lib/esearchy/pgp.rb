@@ -4,6 +4,7 @@ class PGP
   def initialize(maxhits=0)
     @totalhits = maxhits
     @emails = []
+    @lock = Mutex.new
   end
   
   def search(query)
