@@ -12,7 +12,6 @@ SPEC = Gem::Specification.new do |s|
              "lib/esearchy/pdf2txt.rb", "lib/esearchy/pgp.rb", "lib/esearchy/searchy.rb",
              "lib/esearchy/yahoo.rb","lib/esearchy/wcol.rb","lib/esearchy/useragent.rb",
              "lib/esearchy/logger.rb", "lib/esearchy/bugmenot.rb"]
-  s.bin_dir = "/bin"
   %w{esearchy}.each do |command_line_utility|
     s.executables << command_line_utility
   end
