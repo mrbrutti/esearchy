@@ -13,6 +13,7 @@ class GoogleGroups
     @r_pdfs = Queue.new
     @r_txts = Queue.new
     @r_officexs = Queue.new
+    @emails = []
     @lock = Mutex.new
     @threads = []
   end
