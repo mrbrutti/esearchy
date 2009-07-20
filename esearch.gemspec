@@ -1,6 +1,6 @@
 SPEC = Gem::Specification.new do |s| 
   s.name = "esearchy"
-  s.version = "0.0.19"
+  s.version = "0.0.20"
   s.author = "Matias P. Brutti"
   s.email = "matiasbrutti@gmail.com"
   s.homepage = "http://freedomcoder.com.ar/esearchy"
@@ -20,5 +20,5 @@ SPEC = Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README.rdoc"] 
   s.add_dependency("pdf-reader", ">= 0.7.5")
   s.add_dependency("json", ">= 1.1.6")
-  s.add_dependency("rubyzip", ">= 0.9.1")
+  s.add_dependency("FreedomCoder-rubyzip", ">= 0.9.2")
 end 

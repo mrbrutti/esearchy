@@ -35,12 +35,12 @@ class Yahoo
           parse(response.body)
           @start = @start + 50
           if @totalhits > @start
-            ESearchy::LOG.puts "Searching in URL: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching #{self.class} from #{@start-50} to #{@start}"
             search_emails(response.body)
             sleep(4)
             search(@query)
           else
-            ESearchy::LOG.puts "Searching in URL: #{self.class} up to point #{@start}"
+            ESearchy::LOG.puts "Searching #{self.class} from #{@start-50} to #{@start}"
             search_emails(response.body)
           end
         else

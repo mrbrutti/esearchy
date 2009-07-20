@@ -1,5 +1,5 @@
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
-%w{google googlegroups bing yahoo pgp keys 
+%w{google googlegroups bing yahoo pgp keys altavista 
    linkedin logger bugmenot}.each { |lib| require local_path + lib } 
 
 class ESearchy
@@ -25,7 +25,7 @@ class ESearchy
     hsh = {}; arr.each {|e| hsh[e] = instance_eval "#{e}"}; hsh
   end
   
-  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn]
+  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups, :Altavista]
   
   def initialize(options={}, &block)
     @query = options[:query]
@@ -36,7 +36,9 @@ class ESearchy
                                      :Bing => Bing, 
                                      :Yahoo => Yahoo,
                                      :PGP => PGP, 
-                                     :LinkedIn => LinkedIn }
+                                     :LinkedIn => LinkedIn,
+                                     :GoogleGroups => GoogleGroups,
+                                     :Altavista => Altavista }
                                      
     @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
     @threads = Array.new
@@ -115,7 +117,7 @@ class ESearchy
     end
   end
   
-  %w{Google Bing Yahoo PGP LinkedIn GoogleGroups}.each do |engine|
+  %w{Google Bing Yahoo PGP LinkedIn GoogleGroups Altavista}.each do |engine|
     class_eval "
       def search_#{engine}=(value)
         search_engine :#{engine}, value

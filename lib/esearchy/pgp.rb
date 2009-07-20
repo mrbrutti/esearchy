@@ -10,6 +10,7 @@ class PGP
     @emails = []
     @lock = Mutex.new
   end
+  attr_accessor :emails
   
   def search(query)
     @query = query
@@ -31,13 +32,4 @@ class PGP
       ESearchy::LOG.puts "Error: Something went wrong with the HTTP request"
     end
   end
-  
-  def emails
-    @totalhits == 0 ? emails : emails[0..@totalhits]
-  end
-  
-  def emails=(value)
-    emails = value
-  end
-  
 end
