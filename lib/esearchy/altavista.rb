@@ -1,5 +1,3 @@
-# http://www.altavista.com/web/results?itag=ody&q=query&kgs=0&kls=0&nbq=50
-# http://www.altavista.com/web/results?itag=ody&kgs=0&kls=0&nbq=50&q=&stq=50
 %w{rubygems cgi net/http}.each { |lib| require lib }
 local_path = "#{File.dirname(__FILE__)}/"
 %w{searchy keys useragent}.each {|lib| require local_path + lib}

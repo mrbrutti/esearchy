@@ -1,5 +1,5 @@
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
-%w{google googlegroups bing yahoo pgp keys altavista 
+%w{google googlegroups bing yahoo pgp keys altavista usenet
    linkedin logger bugmenot}.each { |lib| require local_path + lib } 
 
 class ESearchy
@@ -25,7 +25,7 @@ class ESearchy
     hsh = {}; arr.each {|e| hsh[e] = instance_eval "#{e}"}; hsh
   end
   
-  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups, :Altavista]
+  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups, :Altavista, :Usenet]
   
   def initialize(options={}, &block)
     @query = options[:query]
@@ -38,7 +38,8 @@ class ESearchy
                                      :PGP => PGP, 
                                      :LinkedIn => LinkedIn,
                                      :GoogleGroups => GoogleGroups,
-                                     :Altavista => Altavista }
+                                     :Altavista => Altavista,
+                                     :Usenet => Usenet }
                                      
     @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
     @threads = Array.new
@@ -46,6 +47,12 @@ class ESearchy
   end
   attr_accessor :engines, :query, :threads, :depth_search
   attr_reader :maxhits
+
+  def self.create(query=nil, &block)
+    self.new :query => query do |search|
+      block.call(search) if block_given?
+    end
+  end
   
   def search(query=nil)
     @engines.each do |n,e|
@@ -55,7 +62,7 @@ class ESearchy
       LOG.puts "+--- Finishing Search for #{n} ---+\n"
     end
   end
-  
+  # retrieve emails
   def emails
     emails = []
     @engines.each do |n,e|
@@ -63,13 +70,26 @@ class ESearchy
     end
     emails
   end
-  
+  ## Filter methods ##
   def clean(&block)
     emails.each do |e|
       e.delete_if block.call
     end
   end
   
+  def filter(regex)
+    emails.each.select { |email| email =~ regex }
+  end
+  
+  def filter_by_score(score)
+    emails.each.select { |email| score >= calculate_score(emails) }
+  end
+  
+  def calculate_score
+    #TODO
+  end
+  
+  ## Option methods ##
   def maxhits=(value)
     @engines.each do |n,e|
       e.maxhits = value
@@ -123,23 +143,35 @@ class ESearchy
         search_engine :#{engine}, value
       end"
   end
-  
-  def save_to_file(file)
+  ## Saving methods
+  def save_to_file(file, list=nil)
     open(file,"a") do |f|
-      emails.each { |e| f << e + "\n" }
+      list ? list.each { |e| f << e + "\n" } : emails.each { |e| f << e + "\n" }
     end
   end
   
-  def filter(regex)
-    emails.each.select { |email| email =~ regex }
+  def save_to_sqlite(file)
+    # TODO save to sqlite3
   end
 
-  def self.create(query=nil, &block)
-    self.new :query => query do |search|
-      block.call(search) if block_given?
+  ## checking methods ##
+  
+  def verify!(arg = emails)
+    if arg.class == Array
+      arg.each { |e| verify(e) }
+    elsif arg.class == String
+      verify(e)
+    else
+      raise(ArgumentError, "Unsupported class")
     end
   end
   
+  def verify(email)
+    domain = email.split('@')[-1]
+    Resolv::DNS.open do |dns|
+      @mx = dns.getresources(domain, Resolv::DNS::Resource::IN::MX)
+    end
+  end
   private
   
   def depth_search?

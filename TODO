@@ -2,7 +2,9 @@ TO DO
 -----
 
 GLOBAL:
-- [PARTIALLY COMPLETED] Implement a better way to read the AppID keys for yahoo and Bing. 
+- IMPORTANT: Add UTF-16 support in Ruby 1.9 :) It would be very interesting to search for emails in that way. 
+
+- [COMPLETED] Implement a better way to read the AppID keys for yahoo and Bing. 
 - [COMPLETED] Make it possible to suppy the total of desires hits. 
 - [COMPLETED] Implement a more open regex that will cover cases such as  
 		- user @ domain.com, 
@@ -23,7 +25,7 @@ GLOBAL:
 LINUX/UNIX/OSX:
 - [COMPLETED] Add support for .doc in unix platforms. (Through antiword) It would be nice to take a
               look at the implementation and see if we can create a method to read files, independently
-              antiword. 
+              antiword.
 
 WINDOWS:
 - [Partially] Implement the .doc search using the Platform and the win32api in windows. 
