@@ -84,11 +84,7 @@ class ESearchy
   def filter_by_score(score)
     emails.each.select { |email| score >= calculate_score(emails) }
   end
-  
-  def calculate_score
-    #TODO
-  end
-  
+    
   ## Option methods ##
   def maxhits=(value)
     @engines.each do |n,e|
@@ -156,23 +152,28 @@ class ESearchy
 
   ## checking methods ##
   
-  def verify!(arg = emails)
-    if arg.class == Array
-      arg.each { |e| verify(e) }
-    elsif arg.class == String
-      verify(e)
-    else
-      raise(ArgumentError, "Unsupported class")
-    end
+  def verify_email!(arg = emails)
+    # TODO
   end
   
-  def verify(email)
+  def verify_domain!(email)
     domain = email.split('@')[-1]
     Resolv::DNS.open do |dns|
       @mx = dns.getresources(domain, Resolv::DNS::Resource::IN::MX)
     end
+    @mx.size > 0 ? true : false
   end
+  
   private
+  
+  def calculate_score
+    # TODO
+    # verify if domain matches with what you are looking for 
+    # if true return + 0.2 
+    # Verify_domain + 0.3
+    # verify_email  # return score as 1
+    #
+  end
   
   def depth_search?
     @depth_search
