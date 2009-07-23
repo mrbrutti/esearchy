@@ -4,11 +4,11 @@
 Esearchy is a small library capable of searching the internet for email addresses. Currently, the supported search methods are, but not limited to:
 
 * Search engines: 
-	* Google
-	* Bing
-	* Yahoo,
-	* AltaVista
-	* GoogleGroups Search 
+  * Google
+  * Bing
+  * Yahoo,
+  * AltaVista
+  * GoogleGroups Search 
 * PGP servers
 * LinkedIn
 

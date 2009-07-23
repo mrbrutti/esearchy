@@ -1,16 +1,16 @@
+require 'resolv'
 local_path = "#{File.dirname(__FILE__) + '/esearchy/'}"
 %w{google googlegroups bing yahoo pgp keys altavista usenet
    linkedin logger bugmenot}.each { |lib| require local_path + lib } 
 
 class ESearchy
-  #Constants 
   
+  #Constants 
   LIBRARY = 1
   APP = 2
-  
   LOG = Logger.new(1, $stdout)
   BUGMENOT = BMN::fetch_user("linkedin.com")
-  
+  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups, :Altavista, :Usenet]
   #End Constants
   
   def log_type=(value)
@@ -20,12 +20,6 @@ class ESearchy
   def log_file=(value)
     ESearchy::LOG.file = value
   end
-  
-  def eng(arr)
-    hsh = {}; arr.each {|e| hsh[e] = instance_eval "#{e}"}; hsh
-  end
-  
-  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups, :Altavista, :Usenet]
   
   def initialize(options={}, &block)
     @query = options[:query]
@@ -40,11 +34,12 @@ class ESearchy
                                      :GoogleGroups => GoogleGroups,
                                      :Altavista => Altavista,
                                      :Usenet => Usenet }
-                                     
     @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
     @threads = Array.new
     block.call(self) if block_given?
   end
+  
+  #Attributes
   attr_accessor :engines, :query, :threads, :depth_search
   attr_reader :maxhits
 
@@ -100,27 +95,33 @@ class ESearchy
     @engines[:Bing].appid = value
   end
   
-  def linkedin_credentials(*args)
+  def linkedin_credentials
+    return @engines[:LinkedIn].username, @engines[:LinkedIn].password
+  end
+  
+  def linkedin_credentials=(*args)
     if args.size == 2
       @engines[:LinkedIn].username = args[0]
       @engines[:LinkedIn].password = args[1]
       return true
-    elsif args.size ==1
+    elsif args.size == 1
       @engines[:LinkedIn].username = args[0][0]
       @engines[:LinkedIn].password = args[0][1]
       return true
     end
     false
   end
-  alias_method :linkedin_credentials=, :linkedin_credentials
   
-  def company_name(company)
+  def company_name
+    @engines[:LinkedIn].company_name
+  end
+  
+  def company_name=(company)
     @engines[:LinkedIn].company_name = company
   end
-  alias_method :company_name=, :company_name
   
   def search_engine(key, value)
-    if [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups].include?(key)
+    if [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, :GoogleGroups, :AltaVisa, :Usenet].include?(key)
       if value == true 
         unless @engines[key]
           @engines[key] = instance_eval "#{key}.new(@maxhits)"
@@ -133,7 +134,7 @@ class ESearchy
     end
   end
   
-  %w{Google Bing Yahoo PGP LinkedIn GoogleGroups Altavista}.each do |engine|
+  %w{Google Bing Yahoo PGP LinkedIn GoogleGroups Altavista Usenet}.each do |engine|
     class_eval "
       def search_#{engine}=(value)
         search_engine :#{engine}, value
@@ -148,31 +149,34 @@ class ESearchy
   
   def save_to_sqlite(file)
     # TODO save to sqlite3
+    # table esearchy with fields (id, Domain, email, score)
   end
 
   ## checking methods ##
   
   def verify_email!(arg = emails)
     # TODO
+    # Connect to mail server if possible verify else 
+    # return 0 for false  2 for true or 1 for error.
+    # VRFY & EXPN & 'RCPT TO:
+    return false
   end
   
-  def verify_domain!(email)
-    domain = email.split('@')[-1]
-    Resolv::DNS.open do |dns|
-      @mx = dns.getresources(domain, Resolv::DNS::Resource::IN::MX)
-    end
-    @mx.size > 0 ? true : false
+  def verify_domain!(e)
+    Resolv::DNS.open.getresources(e.split('@')[-1],Resolv::DNS::Resource::IN::MX) > 0 ? true : false
   end
   
   private
   
-  def calculate_score
-    # TODO
-    # verify if domain matches with what you are looking for 
-    # if true return + 0.2 
-    # Verify_domain + 0.3
-    # verify_email  # return score as 1
-    #
+  def eng(arr)
+    hsh = {}; arr.each {|e| hsh[e] = instance_eval "#{e}"}; hsh
+  end
+  
+  def calculate_score(email)
+    score = 0.0
+    score = score + 0.2 if email =~ /#{@query}/
+    score = score + 0.3 if verify_domain!(email)  
+    score = 1.0 if verify_email!(email)
   end
   
   def depth_search?
