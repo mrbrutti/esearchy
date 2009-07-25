@@ -10,12 +10,6 @@ if RUBY_PLATFORM =~ /mingw|mswin/
 end
 
 module Searchy
-  case RUBY_PLATFORM 
-  when /mingw|mswin/
-    TEMP = "C:\\WINDOWS\\Temp\\"
-  else
-    TEMP = "/tmp/"
-  end    
   
   def search_emails(string)
     list = string.scan(/[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*_at_\
@@ -44,7 +38,7 @@ module Searchy
             response = http.request(request)
             case response
             when Net::HTTPSuccess, Net::HTTPRedirection
-              name = Searchy::TEMP + "#{hash_url(web.to_s)}.pdf"
+              name = ESearchy::TEMP + "#{hash_url(web.to_s)}.pdf"
               open(name, "wb") do |file|
                 file.write(response.body)
               end

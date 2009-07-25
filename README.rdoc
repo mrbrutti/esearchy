@@ -8,12 +8,17 @@ Esearchy is a small library capable of searching the internet for email addresse
   * Bing
   * Yahoo,
   * AltaVista
-  * GoogleGroups Search 
+* Social Networks:
+  * LinkedIn
+  * Google Profiles ( Based on DigiNinja's idea http://www.digininja.org/files/gpscan.rb )
+  * Naymz
 * PGP servers
-* LinkedIn
+* Usenets
+* GoogleGroups Search
 
 
 But Searches do not stop there, ESearchy it also looks for emails inside: 
+
 * PDF 
 * DOC
 * DOCX
