@@ -122,6 +122,7 @@ Not short of that now, we also have the possibility of choosing between a Librar
 
 * http://www.penetrationtests.com/ [Penetration Testing Directory]
 * http://www.mundoruby.com.ar/ [Ruby's News Aggregator]
+* http://www.digininja.org/ [DigiNinja's Website]
 
 == LICENSE:
 
