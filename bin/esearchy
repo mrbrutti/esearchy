@@ -9,10 +9,12 @@ require 'esearchy'
 @maxhits = nil
 @domains = []
 @output = nil
+@company = []
 
 opts = GetoptLong.new(
 [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
 ['--domain','-d', GetoptLong::REQUIRED_ARGUMENT ],
+['--company','-c', GetoptLong::REQUIRED_ARGUMENT ],
 ['--file','-f', GetoptLong::REQUIRED_ARGUMENT ],
 ['--filter','-p', GetoptLong::REQUIRED_ARGUMENT ],
 ['--output','-o', GetoptLong::REQUIRED_ARGUMENT ],
@@ -41,10 +43,14 @@ opts.each do |opt, arg|
       exit(0)
     when '--domain':
       @domains << arg
+    when '--company':
+      @company << arg
     when '--file':
       if File.exists?(arg)
         open(arg,'r').each_line do |line|
-          @domains << line
+          d,c = line.split(',')
+          @domains << d
+          @company << c
         end
       else
         ESearchy::LOG.puts "File not found"
@@ -57,6 +63,8 @@ opts.each do |opt, arg|
       @pattern = arg
     when '--output':
       @output = arg
+    when '--licredentials':
+      @li_username, @li_password = arg.split(":")
     when '--maxhits':
       @maxhits = arg
     else
@@ -66,12 +74,19 @@ opts.each do |opt, arg|
 end
 
 require 'esearchy'
+puts "This is just an example tool ESearchy is more and more a piece of code intended to work as a Library and you should create your own little.rb file :)"
 
-@domains.each do |domain|
+@domains.each_with_index do |domain, idx|
   ESearchy.create domain do |d|
     d.yahoo_key = @yahoo_key if @yahoo_key
     d.bing_key = @bing_key if @bing_key
     d.maxhits = @maxhits if @maxhits
+    if @li_username and @li_password
+      d.linkedin_credentials = (@li_username, @li_password) 
+    else
+      d.linkedin_credentials = ESearchy.bugmenot
+    end
+    d.company_name = @company[idx] unless @company.empty?
     d.search
     d.save_to_file @output if @output
   end

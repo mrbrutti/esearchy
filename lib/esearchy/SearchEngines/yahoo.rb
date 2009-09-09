@@ -37,7 +37,7 @@ class Yahoo
           if @totalhits > @start
             ESearchy::LOG.puts "Searching #{self.class} from #{@start-50} to #{@start}"
             search_emails(response.body)
-            sleep(4)
+            sleep(ESearchy::DELAY)
             search(@query)
           else
             ESearchy::LOG.puts "Searching #{self.class} from #{@start-50} to #{@start}"

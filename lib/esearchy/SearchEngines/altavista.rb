@@ -36,7 +36,7 @@ class Altavista
           if @totalhits > @start
             ESearchy::LOG.puts "Searching #{self.class} from #{@start-50} to #{@start}"
             search_emails(response.body.gsub(/<b>|<\/b>/,""))
-            sleep(4)
+            sleep(ESearchy::DELAY)
             search(query)
           else
             ESearchy::LOG.puts "Searching #{self.class} from #{@start-50} to #{@start}"

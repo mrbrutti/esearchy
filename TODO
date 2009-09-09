@@ -21,6 +21,9 @@ GLOBAL:
 - [COMPLETED] Added BugMeNot class that allows uses to fetch from bug_me_not user credentials.
 - [COMPLETED] Add Random User-Agent support for Search Engines to prevent from being banned. 
 - Add Random sleep times to avoid being banned. 
+- [FIXED] ESearchy crashed when an URI for a PDF contained a white space. 
+- [FIXED] ESearchy::BUGMENOT was not handling correctly on Backtrack live CD.
+- [COMPLETED] Add an ESearchy::DELAY Constant. This could be overwritten and setup a new delay.
 
 LINUX/UNIX/OSX:
 - [COMPLETED] Add support for .doc in unix platforms. (Through antiword) It would be nice to take a

@@ -19,7 +19,7 @@ module Searchy
 (?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z](?:[a-z-]*[a-z])?|\
 [a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*\s@\s(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+\
 [a-z](?:[a-z-]*[a-z])?|[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\sdot\s[a-z0-9!#$&'*+=?^_`\
-{|}~-]+)*\sat\s(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\sdot\s)+[a-z](?:[a-z-]*[a-z])??/)
+{|}~-]+)*\sat\s(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\sdot\s)+[a-z](?:[a-z-]*[a-z])??/i)
     @lock.synchronize do
       print_emails(list)
       @emails.concat(fix(list)).uniq!
@@ -29,7 +29,7 @@ module Searchy
   def search_pdfs(urls)
     while urls.size >= 1
       @threads << Thread.new do
-        web = URI.parse(urls.pop)
+        web = URI.parse(urls.pop.gsub(' ','+'))
         ESearchy::LOG.puts "Searching in PDF: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
@@ -71,7 +71,7 @@ module Searchy
   def search_docs(urls)
     while urls.size >= 1
        @threads << Thread.new do
-         web = URI.parse(urls.pop)
+         web = URI.parse(urls.pop.gsub(' ','+'))
          ESearchy::LOG.puts "Searching in DOC: #{web.to_s}\n"
          begin
            http = Net::HTTP.new(web.host,80)
@@ -140,7 +140,7 @@ module Searchy
   def search_office_xml(urls)
     while urls.size >= 1
       @threads << Thread.new do
-        web = URI.parse(urls.pop)
+        web = URI.parse(urls.pop.gsub(' ','+'))
         #format = web.scan(/docx|xlsx|pptx/i)[0]
         format = web.scan(/docx|xlsx|pptx|odt|odp|ods|odb/i)[0]
         ESearchy::LOG.puts "Searching in #{format.upcase}: #{web.to_s}\n"
@@ -183,7 +183,7 @@ module Searchy
   def search_txts(urls)
     while urls.size >= 1
       @threads << Thread.new do 
-        web = URI.parse(urls.pop)
+        web = URI.parse(urls.pop.gsub(' ','+'))
         ESearchy::LOG.puts "Searching in #{web.to_s.scan(/txt|rtf|ans/i)[0].upcase}: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)

@@ -41,7 +41,7 @@ class Naymz
             ESearchy::LOG.puts "Searching #{self.class} from #{@start-100} to #{@start}"
             parse(response.body)
             search_emails(response.body.gsub(/<em>|<\/em>/,""))
-            sleep(4)
+            sleep(ESearchy::DELAY)
             search(query)
           else
             ESearchy::LOG.puts "Searching #{self.class} from #{@start-100} to #{@start}"

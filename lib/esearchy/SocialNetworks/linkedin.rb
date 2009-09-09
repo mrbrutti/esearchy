@@ -18,7 +18,7 @@ class LinkedIn
     @company_name = nil
     @cookie = nil
   end
-  attr_accessor :emails, :username, :password, :company_name
+  attr_accessor :emails, :username, :password, :company_name, :people
   
   def login
     begin
@@ -76,7 +76,7 @@ class LinkedIn
             ESearchy::LOG.puts "Searching in: #{self.class} up to point #{@start}"
             search_people(response.body)
             create_emails
-            sleep(4)
+            sleep(ESearchy::DELAY)
             search(@query)
           else
             ESearchy::LOG.puts "Searching in: #{self.class} up to point #{@start}"

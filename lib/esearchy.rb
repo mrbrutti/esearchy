@@ -10,6 +10,7 @@ class ESearchy
   #Constants 
   LIBRARY = 1
   APP = 2
+  DELAY = 4
   LOG = Logger.new(1, $stdout)
   BUGMENOT = BMN::fetch_user("linkedin.com")
   DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, 
@@ -28,6 +29,10 @@ class ESearchy
   
   def log_file=(value)
     ESearchy::LOG.file = value
+  end
+  
+  def delay=(value)
+    ESearch.DELAY = value
   end
   
   def initialize(options={}, &block)
@@ -79,7 +84,7 @@ class ESearchy
   
   def people
     people = []
-    [:LinkedIn, :GoogleProfiles].each do |e| 
+    [:LinkedIn, :GoogleProfiles, :Naymz].each do |e| 
       people.concat(@engines[e].people) if @engines[e]
     end
     people.uniq!
@@ -147,7 +152,7 @@ class ESearchy
   
   def search_engine(key, value)
     if [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, 
-        :GoogleGroups, :AltaVisa, :Usenet, :GoogleProfiles, Naymz].include?(key)
+        :GoogleGroups, :Altavista, :Usenet, :GoogleProfiles, :Naymz].include?(key)
       if value == true 
         unless @engines[key]
           @engines[key] = instance_eval "#{key}.new(@maxhits)"
