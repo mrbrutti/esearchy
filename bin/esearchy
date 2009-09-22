@@ -10,9 +10,20 @@ require 'esearchy'
 @domains = []
 @output = nil
 @company = []
+@no_eng = {}
 
 opts = GetoptLong.new(
 [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+[ '--disable-google', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-yahoo', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-bing',nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-altavisa', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-linkedin', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-gprofiles', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-naymz', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-ggroups', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-pgp', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-usenet', nil, GetoptLong::NO_ARGUMENT ],
 ['--domain','-d', GetoptLong::REQUIRED_ARGUMENT ],
 ['--company','-c', GetoptLong::REQUIRED_ARGUMENT ],
 ['--file','-f', GetoptLong::REQUIRED_ARGUMENT ],
@@ -41,6 +52,26 @@ opts.each do |opt, arg|
       Copyright 2009 - FreedomCoder\n"
       #END OF HELP
       exit(0)
+    when '--disable-google':
+      @no_eng[:google] = false
+    when '--disable-yahoo':
+      @no_eng[:yahoo] = false
+    when '--disable-bing':
+      @no_eng[:bing] = false
+    when '--disable-altavisa':
+      @no_eng[:altavista] = false
+    when '--disable-linkedin':
+      @no_eng[:linkedin] = false
+    when '--disable-gprofiles':
+      @no_eng[:googleprofiles] = false
+    when '--disable-naymz':
+      @no_eng[:naymz] = false
+    when '--disable-ggroups':
+      @no_eng[:googlegroups] = false
+    when '--disable-pgp':
+      @no_eng[:pgp] = false
+    when '--disable-usenet':
+      @no_eng[:usenet] = false
     when '--domain':
       @domains << arg
     when '--company':
@@ -76,8 +107,11 @@ end
 require 'esearchy'
 puts "This is just an example tool ESearchy is more and more a piece of code intended to work as a Library and you should create your own little.rb file :)"
 
+ESearchy::LOG.level = ESearchy::APP
+
 @domains.each_with_index do |domain, idx|
   ESearchy.create domain do |d|
+    @no_eng.each { |eng,val| search_engine eng, val }
     d.yahoo_key = @yahoo_key if @yahoo_key
     d.bing_key = @bing_key if @bing_key
     d.maxhits = @maxhits if @maxhits

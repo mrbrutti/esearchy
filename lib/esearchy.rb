@@ -32,7 +32,7 @@ class ESearchy
   end
   
   def delay=(value)
-    ESearch.DELAY = value
+    ESearch::DELAY = value
   end
   
   def initialize(options={}, &block)
