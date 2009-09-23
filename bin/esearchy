@@ -10,20 +10,20 @@ require 'esearchy'
 @domains = []
 @output = nil
 @company = []
-@no_eng = {}
+@no_eng = Hash.new
 
 opts = GetoptLong.new(
 [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-[ '--disable-google', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-yahoo', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-bing',nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-altavisa', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-linkedin', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-gprofiles', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-naymz', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-ggroups', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-pgp', nil, GetoptLong::NO_ARGUMENT ],
-[ '--disable-usenet', nil, GetoptLong::NO_ARGUMENT ],
+[ '--disable-google', GetoptLong::NO_ARGUMENT ],
+[ '--disable-yahoo', GetoptLong::NO_ARGUMENT ],
+[ '--disable-bing', GetoptLong::NO_ARGUMENT ],
+[ '--disable-altavisa', GetoptLong::NO_ARGUMENT ],
+[ '--disable-linkedin', GetoptLong::NO_ARGUMENT ],
+[ '--disable-gprofiles', GetoptLong::NO_ARGUMENT ],
+[ '--disable-naymz', GetoptLong::NO_ARGUMENT ],
+[ '--disable-ggroups', GetoptLong::NO_ARGUMENT ],
+[ '--disable-pgp', GetoptLong::NO_ARGUMENT ],
+[ '--disable-usenet', GetoptLong::NO_ARGUMENT ],
 ['--domain','-d', GetoptLong::REQUIRED_ARGUMENT ],
 ['--company','-c', GetoptLong::REQUIRED_ARGUMENT ],
 ['--file','-f', GetoptLong::REQUIRED_ARGUMENT ],
@@ -111,12 +111,14 @@ ESearchy::LOG.level = ESearchy::APP
 
 @domains.each_with_index do |domain, idx|
   ESearchy.create domain do |d|
-    @no_eng.each { |eng,val| search_engine eng, val }
+    @no_eng.each do |eng,val| 
+      search_engine(eng, val)
+    end
     d.yahoo_key = @yahoo_key if @yahoo_key
     d.bing_key = @bing_key if @bing_key
     d.maxhits = @maxhits if @maxhits
-    if @li_username and @li_password
-      d.linkedin_credentials = (@li_username, @li_password) 
+    if (@li_username and @li_password)
+      d.linkedin_credentials= [@li_username, @li_password]
     else
       d.linkedin_credentials = ESearchy.bugmenot
     end

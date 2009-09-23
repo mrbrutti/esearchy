@@ -115,8 +115,8 @@ Not short of that now, we also have the possibility of choosing between a Librar
 * rubyzip ( Migrating to FreedomCoder-rubyzip 0.9.2 so it's 1.9 compatible)
 
 == INSTALL:
-
-* sudo gem install freedomcoder-esearchy
+* > sudo gem sources -a http://gems.github.com   (If you do not have the repository)
+* > sudo gem install freedomcoder-esearchy
 
 == THANKS:
 
