@@ -30,10 +30,10 @@ class ESearchy
   def log_file=(value)
     ESearchy::LOG.file = value
   end
-  
-  def delay=(value)
-    ESearch::DELAY = value
-  end
+  # Need to find another way of fixing this.
+  #def delay=(value)
+  #  ESearch::DELAY = value
+  #end
   
   def initialize(options={}, &block)
     @query = options[:query]

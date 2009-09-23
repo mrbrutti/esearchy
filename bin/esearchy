@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'getoptlong'
 require 'esearchy'
+ESearchy::LOG.level = ESearchy::APP
 
 @yahoo_key = nil
 @bing_key = nil
@@ -43,8 +44,26 @@ opts.each do |opt, arg|
       \tWell I guess you know what this is for (To obtain this Help).\n
       --domain, -d [domain.com]
       \t The domain name to search.\n
+      --disable-google
+      \t Disables Google searches.\n
+      --disable-yahoo
+      \t Disables Yahoo searches.\n
+      --disable-bing
+      \t Disables Bing searches.\n
+      --disable-linkedin
+      \t Disables LinkedIn searches.\n
+      --disable-gprogiles
+      \t Disables Google Profiles searches.\n
+      --disable-naymz
+      \t Disables Naymz searches.\n
+      --disable-ggroups
+      \t Disables Google Groups searches.\n
+      --disable-pgp
+      \t Disables PGP searches.\n
+      --disable-usenet
+      \t Disables Usenet searches.\n
       --filter, -p
-      \t The pattern to use to filter emails.\n
+      \t The pattern to use to filter emails.(not fully implemented)\n
       --file, -f [file_name] 
       \tIf we need to search more than one domain we can provide a list.\n
       --output, -o
@@ -53,25 +72,25 @@ opts.each do |opt, arg|
       #END OF HELP
       exit(0)
     when '--disable-google':
-      @no_eng[:google] = false
+      @no_eng[:Google] = false
     when '--disable-yahoo':
-      @no_eng[:yahoo] = false
+      @no_eng[:Yahoo] = false
     when '--disable-bing':
-      @no_eng[:bing] = false
+      @no_eng[:Bing] = false
     when '--disable-altavisa':
-      @no_eng[:altavista] = false
+      @no_eng[:Altavista] = false
     when '--disable-linkedin':
-      @no_eng[:linkedin] = false
+      @no_eng[:LinkedIn] = false
     when '--disable-gprofiles':
-      @no_eng[:googleprofiles] = false
+      @no_eng[:GoogleProfiles] = false
     when '--disable-naymz':
-      @no_eng[:naymz] = false
+      @no_eng[:Naymz] = false
     when '--disable-ggroups':
-      @no_eng[:googlegroups] = false
+      @no_eng[:GoogleGroups] = false
     when '--disable-pgp':
-      @no_eng[:pgp] = false
+      @no_eng[:PGP] = false
     when '--disable-usenet':
-      @no_eng[:usenet] = false
+      @no_eng[:Usenet] = false
     when '--domain':
       @domains << arg
     when '--company':
@@ -97,7 +116,7 @@ opts.each do |opt, arg|
     when '--licredentials':
       @li_username, @li_password = arg.split(":")
     when '--maxhits':
-      @maxhits = arg
+      @maxhits = arg.to_i
     else
       ESearchy::LOG.puts "Unknown command. Please try again"
       exit(0)
@@ -105,10 +124,11 @@ opts.each do |opt, arg|
 end
 
 require 'esearchy'
-puts "This is just an example tool ESearchy is more and more a piece of code intended to work as a Library and you should create your own little.rb file :)"
-
-ESearchy::LOG.level = ESearchy::APP
-
+puts "DISCLOSURE: This is just an example tool ESearchy is more and more a piece 
+of code intended to work as a Library and you should create your own little.rb file :)"
+puts "------------------------------------------------------------------------"
+puts "REMINDER: if you want to use GoogleProfiles, LinkedIn or Naymz, you will 
+need to use the --company (-c) <company_name> option"
 @domains.each_with_index do |domain, idx|
   ESearchy.create domain do |d|
     @no_eng.each do |eng,val| 
@@ -120,7 +140,7 @@ ESearchy::LOG.level = ESearchy::APP
     if (@li_username and @li_password)
       d.linkedin_credentials= [@li_username, @li_password]
     else
-      d.linkedin_credentials = ESearchy.bugmenot
+      d.linkedin_credentials = ESearchy::BUGMENOT
     end
     d.company_name = @company[idx] unless @company.empty?
     d.search
