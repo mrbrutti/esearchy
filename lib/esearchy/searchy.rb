@@ -17,8 +17,8 @@ module Searchy
 [a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*\sat\s(?:[a-z0-9](?:[a-z0-9-]\
 *[a-z0-9])?\.)+[a-z](?:[a-z-]*[a-z])?|[a-z0-9!#$&'*+=?^_`{|}~-]+\
 (?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z](?:[a-z-]*[a-z])?|\
-[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*\s@\s(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+\
-[a-z](?:[a-z-]*[a-z])?|[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\sdot\s[a-z0-9!#$&'*+=?^_`\
+[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*\s@\s(?:[a-z0-9](?:[a-z0-9-]*\
+[a-z0-9])?\.)+[a-z](?:[a-z-]*[a-z])?|[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\sdot\s[a-z0-9!#$&'*+=?^_`\
 {|}~-]+)*\sat\s(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\sdot\s)+[a-z](?:[a-z-]*[a-z])??/i)
     @lock.synchronize do
       print_emails(list)
@@ -30,30 +30,36 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do
         web = URI.parse(urls.pop.gsub(' ','+'))
-        ESearchy::LOG.puts "Searching in PDF: #{web.to_s}\n"
         begin
           http = Net::HTTP.new(web.host,80)
           http.start do |http|
-            request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+            request = Net::HTTP::Head.new("#{web.path}#{web.query}")
             response = http.request(request)
-            case response
-            when Net::HTTPSuccess, Net::HTTPRedirection
-              name = ESearchy::TEMP + "#{hash_url(web.to_s)}.pdf"
-              open(name, "wb") do |file|
-                file.write(response.body)
+            if response.content_length < 10485760
+              ESearchy::LOG.puts "Searching in PDF: #{web.to_s}\n"
+              request = Net::HTTP::Get.new("#{web.path}#{web.query}")
+              response = http.request(request)
+              case response
+              when Net::HTTPSuccess, Net::HTTPRedirection
+                name = ESearchy::TEMP + "#{hash_url(web.to_s)}.pdf"
+                open(name, "wb") do |file|
+                  file.write(response.body)
+                end
+                begin
+                  receiver = PageTextReceiver.new
+                  pdf = PDF::Reader.file(name, receiver)
+                  search_emails(receiver.content.inspect)
+                rescue PDF::Reader::UnsupportedFeatureError
+                  ESearchy::LOG.puts "Encrypted PDF: Unable to parse it.\n"
+                rescue PDF::Reader::MalformedPDFError
+                  ESearchy::LOG.puts "Malformed PDF: Unable to parse it.\n"
+                end
+                `rm "#{name}"`
+              else
+                return response.error!
               end
-              begin
-                receiver = PageTextReceiver.new
-                pdf = PDF::Reader.file(name, receiver)
-                search_emails(receiver.content.inspect)
-              rescue PDF::Reader::UnsupportedFeatureError
-                ESearchy::LOG.puts "Encrypted PDF: Unable to parse it.\n"
-              rescue PDF::Reader::MalformedPDFError
-                ESearchy::LOG.puts "Malformed PDF: Unable to parse it.\n"
-              end
-              `rm "#{name}"`
             else
-              return response.error!
+              ESearchy::LOG.puts "Skipping PDF #{web.to_s}, bigger than 10MB."
             end
           end
         rescue Net::HTTPFatalError
@@ -141,7 +147,6 @@ module Searchy
     while urls.size >= 1
       @threads << Thread.new do
         web = URI.parse(urls.pop.gsub(' ','+'))
-        #format = web.scan(/docx|xlsx|pptx/i)[0]
         format = web.scan(/docx|xlsx|pptx|odt|odp|ods|odb/i)[0]
         ESearchy::LOG.puts "Searching in #{format.upcase}: #{web.to_s}\n"
         begin
@@ -244,6 +249,8 @@ module Searchy
       e.gsub!(" at ","@")
       e.gsub!("_at_","@")
       e.gsub!(" dot ",".")
+      e.gsub!(/[+0-9]{0,3}[0-9()]{3,5}[-]{0,1}[0-9]{3,4}[-]{0,1}[0-9]{3,5}/,"")
+    #  e = e[/[a-z0-9!#$&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)(?:arpa|com|edu|firm|gov|int|mil|mobi|nato|net|nom|org|store|web|co|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|ee|eg.eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|fx|ga|gb|gd|ge|gf|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|in|io|iq|ir|is|it|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nt|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zr|zw)*(?:\.ac|\.ad|\.ae|\.af|\.ag|\.ai|\.al|\.am|\.an|\.ao|\.aq|\.ar|\.as|\.at|\.au|\.aw|\.az|\.ba|\.bb|\.bd|\.be|\.bf|\.bg|\.bh|\.bi|\.bj|\.bm|\.bn|\.bo|\.br|\.bs|\.bt|\.bv|\.bw|\.by|\.bz|\.ca|\.cc|\.cf|\.cg|\.ch|\.ci|\.ck|\.cl|\.cm|\.cn|\.co|\.cr|\.cs|\.cu|\.cv|\.cx|\.cy|\.cz|\.de|\.dj|\.dk|\.dm|\.do|\.dz|\.ec|\.ee|\.eg.eh|\.er|\.es|\.et|\.eu|\.fi|\.fj|\.fk|\.fm|\.fo|\.fr|\.fx|\.ga|\.gb|\.gd|\.ge|\.gf|\.gh|\.gi|\.gl|\.gm|\.gn|\.gp|\.gq|\.gr|\.gs|\.gt|\.gu|\.gw|\.gy|\.hk|\.hm|\.hn|\.hr|\.ht|\.hu|\.id|\.ie|\.il|\.in|\.io|\.iq|\.ir|\.is|\.it|\.jm|\.jo|\.jp|\.ke|\.kg|\.kh|\.ki|\.km|\.kn|\.kp|\.kr|\.kw|\.ky|\.kz|\.la|\.lb|\.lc|\.li|\.lk|\.lr|\.ls|\.lt|\.lu|\.lv|\.ly|\.ma|\.mc|\.md|\.mg|\.mh|\.mk|\.ml|\.mm|\.mn|\.mo|\.mp|\.mq|\.mr|\.ms|\.mt|\.mu|\.mv|\.mw|\.mx|\.my|\.mz|\.na|\.nc|\.ne|\.nf|\.ng|\.ni|\.nl|\.no|\.np|\.nr|\.nt|\.nu|\.nz|\.om|\.pa|\.pe|\.pf|\.pg|\.ph|\.pk|\.pl|\.pm|\.pn|\.pr|\.pt|\.pw|\.py|\.qa|\.re|\.ro|\.ru|\.rw|\.sa|\.sb|\.sc|\.sd|\.se|\.sg|\.sh|\.si|\.sj|\.sk|\.sl|\.sm|\.sn|\.so|\.sr|\.st|\.su|\.sv|\.sy|\.sz|\.tc|\.td|\.tf|\.tg|\.th|\.tj|\.tk|\.tm|\.tn|\.to|\.tp|\.tr|\.tt|\.tv|\.tw|\.tz|\.ua|\.ug|\.uk|\.um|\.us|\.uy|\.uz|\.va|\.vc|\.ve|\.vg|\.vi|\.vn|\.vu|\.wf|\.ws|\.ye|\.yt|\.yu|\.za|\.zm|\.zr|\.zw)?/i]
     end
   end
   
@@ -259,8 +266,6 @@ module Searchy
     search_pdfs @r_pdfs if @r_pdfs
     search_txts @r_txts if @r_txts
     search_office_xml @r_officexs if @r_officexs
-    if RUBY_PLATFORM =~ /mingw|mswin/
-      search_docs @r_docs if @r_docs
-    end
+    search_docs @r_docs if @r_docs
   end
 end

@@ -18,7 +18,15 @@ class Bing
     @r_txts = Queue.new
     @lock = Mutex.new
   end
-  attr_accessor :emails, :appid
+  attr_accessor :appid
+  
+  def emails
+    @emails.uniq!
+  end
+  
+  def emails=(value)
+    @emails=value
+  end
   
   def search(query)
     @query = query

@@ -80,7 +80,7 @@ or in the more classic way in which you can create an Esearchy objetc and work o
   domain.save_to_file "~/emails.txt"
 
 We now also have a LinkedIn search which looks for Names in the site. With those names it 
-* creates emails based on those emails.
+* creates emails based on those names.
 * searches Google and Yahoo for emails related to those people.
 
   ESearchy.create "domain.com" do |d|
@@ -116,7 +116,7 @@ Not short of that now, we also have the possibility of choosing between a Librar
 
 == INSTALL:
 * > sudo gem sources -a http://gems.github.com   (If you do not have the repository)
-* > sudo gem install freedomcoder-esearchy
+* > sudo gem install FreedomCoder-esearchy
 
 == THANKS:
 

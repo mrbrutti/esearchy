@@ -22,7 +22,23 @@ class GoogleProfiles
     @lock = Mutex.new
     @threads = []
   end
-  attr_accessor :emails, :company_name, :people
+  attr_accessor :company_name
+  
+  def emails
+    @emails.uniq!
+  end
+  
+  def emails=(value)
+    @emails=value
+  end
+  
+  def people
+    @people.uniq!
+  end
+  
+  def people=(value)
+    @people=value
+  end
   
   def search(query)
     @query = query

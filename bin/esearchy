@@ -2,7 +2,8 @@
 
 require 'rubygems'
 require 'getoptlong'
-require 'esearchy'
+require '../lib/esearchy.rb'
+
 ESearchy::LOG.level = ESearchy::APP
 
 @yahoo_key = nil
@@ -123,12 +124,12 @@ opts.each do |opt, arg|
   end
 end
 
-require 'esearchy'
 puts "DISCLOSURE: This is just an example tool ESearchy is more and more a piece 
 of code intended to work as a Library and you should create your own little.rb file :)"
 puts "------------------------------------------------------------------------"
 puts "REMINDER: if you want to use GoogleProfiles, LinkedIn or Naymz, you will 
 need to use the --company (-c) <company_name> option"
+
 @domains.each_with_index do |domain, idx|
   ESearchy.create domain do |d|
     @no_eng.each do |eng,val| 
@@ -143,7 +144,7 @@ need to use the --company (-c) <company_name> option"
       d.linkedin_credentials = ESearchy::BUGMENOT
     end
     d.company_name = @company[idx] unless @company.empty?
-    d.search
     d.save_to_file @output if @output
+    d.search
   end
 end

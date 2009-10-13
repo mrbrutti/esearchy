@@ -2,8 +2,6 @@ TO DO
 -----
 
 GLOBAL:
-- IMPORTANT: Add UTF-16 support in Ruby 1.9 :) It would be very interesting to search for emails in that way. 
-
 - [COMPLETED] Implement a better way to read the AppID keys for yahoo and Bing. 
 - [COMPLETED] Make it possible to suppy the total of desires hits. 
 - [COMPLETED] Implement a more open regex that will cover cases such as  
@@ -12,19 +10,17 @@ GLOBAL:
 		- user at domain dot com
 		- [BUG] It returns some strings that are not emails. 
 		        Checking regext to fine-tune it to avoid this false pasitivs
-		
 - [COMPLETED] Add LinkedIn Support.
   		- Fetch results into Yahoo People to obtain possible emails accounts.
 		[SOLVED][BUG] - This will return the users' vcard. Need to find some way to fix this.
-		
-- Add other social network sites ( I need to research on this)
 - [COMPLETED] Added BugMeNot class that allows uses to fetch from bug_me_not user credentials.
 - [COMPLETED] Add Random User-Agent support for Search Engines to prevent from being banned. 
-- Add Random sleep times to avoid being banned. 
 - [FIXED] ESearchy crashed when an URI for a PDF contained a white space. 
 - [FIXED] ESearchy::BUGMENOT was not handling correctly on Backtrack live CD.
 - [COMPLETED] Add an ESearchy::DELAY Constant. This could be overwritten and setup a new delay.
-
+- Add Random sleep times to avoid being banned. 
+- IMPORTANT: Add UTF-16 support in Ruby 1.9 :) It would be very interesting to search for emails in that way. 
+- Add other social network sites ( I need to research on this)
 LINUX/UNIX/OSX:
 - [COMPLETED] Add support for .doc in unix platforms. (Through antiword) It would be nice to take a
               look at the implementation and see if we can create a method to read files, independently
@@ -38,3 +34,5 @@ WINDOWS:
 - [FIXED][BUG] Windows Vista with Ruby One click installer 3.0 does not support String.first so now
                we use String[range] (name[0,1])
 
+FEATURE REQUEST:
+- Add session handling. ( recover last scan, etc ...)

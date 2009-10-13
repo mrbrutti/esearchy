@@ -10,7 +10,14 @@ class PGP
     @emails = []
     @lock = Mutex.new
   end
-  attr_accessor :emails
+  
+  def emails
+    @emails.uniq!
+  end
+  
+  def emails=(value)
+    @emails=value
+  end
   
   def search(query)
     @query = query

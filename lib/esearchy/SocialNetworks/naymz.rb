@@ -20,7 +20,23 @@ class Naymz
     @lock = Mutex.new
     @threads = []
   end
-  attr_accessor :emails, :company_name, :people
+  attr_accessor :company_name
+  
+  def emails
+    @emails.uniq!
+  end
+  
+  def emails=(value)
+    @emails=value
+  end
+  
+  def people
+    @people.uniq!
+  end
+  
+  def people=(value)
+    @people=value
+  end
   
   def search(query)
     @query = query
@@ -86,8 +102,9 @@ a-z:\\\/?&=@+%.;"'()_-]+)" class=l>([\w\s]*) -/).each do |profile|
       end
       name,last = person.size > 2 ? [person[0],person[-1]] : person
       @people << person
-      @emails << "#{name.split(' ')[0]}.#{last.split(' ')[0]}#{@domain}"
-      @emails << "#{name[0,1]}#{last.split(' ')[0]}#{@domain}"
+      @emails << "#{name.split(' ')[0] unless name.nil?}" + 
+                 ".#{last.split(' ')[0] unless last.nil?}#{@domain}"
+      @emails << "#{name[0,1] unless name.nil?}#{last.split(' ')[0] unless last.nil?}#{@domain}"
       #@emails.concat(fix(search_person(name,last)))
       @emails.uniq!
       print_emails(@emails)

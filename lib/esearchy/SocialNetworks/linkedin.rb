@@ -18,7 +18,23 @@ class LinkedIn
     @company_name = nil
     @cookie = nil
   end
-  attr_accessor :emails, :username, :password, :company_name, :people
+  attr_accessor :username, :password, :company_name, :people
+  
+  def emails
+    @emails.uniq!
+  end
+  
+  def emails=(value)
+    @emails=value
+  end
+  
+  def people
+    @people.uniq!
+  end
+  
+  def people=(value)
+    @people=value
+  end
   
   def login
     begin

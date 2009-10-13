@@ -30,6 +30,7 @@ class ESearchy
   def log_file=(value)
     ESearchy::LOG.file = value
   end
+  
   # Need to find another way of fixing this.
   #def delay=(value)
   #  ESearch::DELAY = value
@@ -71,6 +72,7 @@ class ESearchy
       e.search(query || @query)
       e.search_depth if depth_search?
       LOG.puts "+--- Finishing Search for #{n} ---+\n"
+      write_to_file if @file
     end
   end
   # retrieve emails
@@ -173,10 +175,17 @@ class ESearchy
       end"
   end
   ## Saving methods
-  def save_to_file(file, list=nil)
-    open(file,"a") do |f|
-      list ? list.each { |e| f << e + "\n" } : emails.each { |e| f << e + "\n" }
-    end
+  def save_to_file(file)
+    @file = File.new(file,"a")
+    @file.sync = true
+    return 0
+  end
+  
+  def write_to_file(list=nil)
+    #open(@file,"a") do |f|
+    #  list ? list.each { |e| f << e + "\n" } : emails.each { |e| f << e + "\n" }
+    #end
+    list ? list.each { |e| @file << e + "\n" } : emails.each { |e| @file << e + "\n" }
   end
   
   def save_to_sqlite(file)
@@ -209,6 +218,7 @@ class ESearchy
     score = score + 0.2 if email =~ /#{@query}/
     score = score + 0.3 if verify_domain!(email)  
     score = 1.0 if verify_email!(email)
+    return score
   end
   
   def depth_search?
