@@ -68,11 +68,12 @@ class ESearchy
   
   def search(query=nil)
     @engines.each do |n,e|
-      LOG.puts "+--- Launching Search for #{n} ---+\n"
+      LOG.puts "Launching Search for #{n}\n"
       e.search(query || @query)
       e.search_depth if depth_search?
-      LOG.puts "+--- Finishing Search for #{n} ---+\n"
+      LOG.puts "Finishing Search for #{n}\n"
       write_to_file if @file
+      write_to_sqlite if @file
     end
   end
   # retrieve emails
@@ -176,21 +177,34 @@ class ESearchy
   end
   ## Saving methods
   def save_to_file(file)
-    @file = File.new(file,"a")
+    @file = File.new(file,"a+")
     @file.sync = true
     return 0
   end
   
   def write_to_file(list=nil)
-    #open(@file,"a") do |f|
-    #  list ? list.each { |e| f << e + "\n" } : emails.each { |e| f << e + "\n" }
-    #end
     list ? list.each { |e| @file << e + "\n" } : emails.each { |e| @file << e + "\n" }
   end
   
   def save_to_sqlite(file)
     # TODO save to sqlite3
     # table esearchy with fields (id, Domain, email, score)
+    require 'sqlite3'
+    @db = SQLite3::Database.new(file)
+    @db.execute("CREATE TABLE IF NOT EXISTS results (
+      id integer primary key asc, 
+      domain text, 
+      email text, 
+      score real);")
+    @db.commit
+  end
+  
+  def write_to_sqlite(list=nil)
+    (list || emails).each do |e| 
+      @db.execute("INTERT INTO results (domain,email,score) 
+                   VALUES (#{@query.gsub("@","")},#{e},#{1.0});")
+    end
+    @db.commit            
   end
 
   ## checking methods ##

@@ -68,7 +68,7 @@ class GoogleGroups
         @r_pdfs << result[0]
       when /.doc$/i
         @r_docs << result[0]
-      when /.docx$|.xlsx$|.pptx$/i
+      when /.docx$|.xlsx$|.pptx$|.odt$|.odp$|.ods$|.odb$/i
         @r_officexs << result[0]
       when /.txt$|.asn$/i
         @r_txts << result[0]
