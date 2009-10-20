@@ -13,16 +13,35 @@ class ESearchy
   DELAY = 4
   LOG = Logger.new(1, $stdout)
   BUGMENOT = BMN::fetch_user("linkedin.com")
-  DEFAULT_ENGINES = [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, 
-                     :GoogleGroups, :Altavista, :Usenet, :GoogleProfiles, :Naymz]
+  
+  @@default_engines = { 
+    :Google          => Google, 
+    :Bing            => Bing, 
+    :Yahoo           => Yahoo, 
+    :PGP             => PGP, 
+    :LinkedIn        => LinkedIn, 
+    :GoogleGroups    => GoogleGroups, 
+    :Altavista       => Altavista,
+    :Usenet          => Usenet, 
+    :GoogleProfiles  => GoogleProfiles, 
+    :Naymz           => Naymz,
+    :Classmates      => Classmates, 
+    :Spider          => Spider }
+  
   case RUBY_PLATFORM 
   when /mingw|mswin/
     TEMP = "C:\\WINDOWS\\Temp\\"
   else
     TEMP = "/tmp/"
   end
-  #End Constants
   
+  
+  #Attributes
+  attr_accessor :engines, :query, :threads, :depth_search
+  attr_reader :maxhits
+  
+  
+  #Loggin methods.
   def log_type=(value)
     ESearchy::LOG.level = value
   end
@@ -40,25 +59,12 @@ class ESearchy
     @query = options[:query]
     @depth_search = options[:depth] || true
     @maxhits = options[:maxhits] || 0
-    @engines = options[:engines] ? eng(options[:engines]) : 
-                                   { :Google => Google, 
-                                     :Bing => Bing, 
-                                     :Yahoo => Yahoo,
-                                     :PGP => PGP, 
-                                     :LinkedIn => LinkedIn,
-                                     :GoogleGroups => GoogleGroups,
-                                     :Altavista => Altavista,
-                                     :Usenet => Usenet,
-                                     :GoogleProfiles => GoogleProfiles,
-                                     :Naymz => Naymz }
+    @engines = options[:engines] ? eng(options[:engines]) : @@default_engines                
     @engines.each {|n,e| @engines[n] = e.new(@maxhits)}
     @threads = Array.new
     block.call(self) if block_given?
   end
-  
-  #Attributes
-  attr_accessor :engines, :query, :threads, :depth_search
-  attr_reader :maxhits
+
 
   def self.create(query=nil, &block)
     self.new :query => query do |search|
@@ -68,14 +74,19 @@ class ESearchy
   
   def search(query=nil)
     @engines.each do |n,e|
-      LOG.puts "Launching Search for #{n}\n"
-      e.search(query || @query)
-      e.search_depth if depth_search?
-      LOG.puts "Finishing Search for #{n}\n"
+      begin
+        LOG.puts "Launching Search for #{n}\n"
+        e.search(query || @query)
+        e.search_depth if depth_search?
+        LOG.puts "Finishing Search for #{n}\n"        
+      rescue
+        LOG.puts "Something went wrong with #{n}\n"
+      end
       write_to_file if @file
       write_to_sqlite if @file
     end
   end
+  
   # retrieve emails
   def emails
     emails = []
@@ -85,9 +96,10 @@ class ESearchy
     emails
   end
   
+  #retrieve people so far.
   def people
     people = []
-    [:LinkedIn, :GoogleProfiles, :Naymz].each do |e| 
+    [:LinkedIn, :GoogleProfiles, :Naymz, :Classmates].each do |e| 
       people.concat(@engines[e].people) if @engines[e]
     end
     people.uniq!
@@ -143,11 +155,11 @@ class ESearchy
   def company_name
     (@engines[:LinkedIn] || 
      @engines[:GoogleProfiles] || 
-     @engines[:Naymz]).company_name || nil
+     @engines[:Naymz] || @engines[:Classmates]).company_name || nil
   end
   
   def company_name=(company)
-    [:LinkedIn, :GoogleProfiles, :Naymz].each do |e| 
+    [:LinkedIn, :GoogleProfiles, :Naymz, :Classmates].each do |e| 
       @engines[e].company_name = company if @engines[e]
     end
     
@@ -155,7 +167,8 @@ class ESearchy
   
   def search_engine(key, value)
     if [:Google, :Bing, :Yahoo, :PGP, :LinkedIn, 
-        :GoogleGroups, :Altavista, :Usenet, :GoogleProfiles, :Naymz].include?(key)
+        :GoogleGroups, :Altavista, :Usenet, :GoogleProfiles, 
+        :Naymz, :Classmates, :Spider].include?(key)
       if value == true 
         unless @engines[key]
           @engines[key] = instance_eval "#{key}.new(@maxhits)"
@@ -168,8 +181,8 @@ class ESearchy
     end
   end
   
-  %w{Google Bing Yahoo PGP LinkedIn GoogleGroups 
-     Altavista Usenet GoogleProfiles Naymz}.each do |engine|
+  %w{Google Bing Yahoo PGP LinkedIn GoogleGroups Altavista 
+     Usenet GoogleProfiles Naymz Classmates Spider}.each do |engine|
     class_eval "
       def search_#{engine}=(value)
         search_engine :#{engine}, value
