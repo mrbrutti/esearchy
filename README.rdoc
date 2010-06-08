@@ -5,11 +5,17 @@ BUG AND FEATURE REQUEST FOR VERSION 1.2.4 ARE STILL WELCOMED. THANKS A LOT.
 YOU CAN COLLABORATE INTO THE NEW BRANCH http://github.com/FreedomCoder/esearchy-ng
 
 THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+
 THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+
 THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+
 THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+
 THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+
 THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+
 THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
 
 == DESCRIPTION
