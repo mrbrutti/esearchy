@@ -4,6 +4,14 @@ IMPORTANT : CURRENTLY WE ARE UNDER A MAYOR RE-WRITE FOR VERSION 0.2.
 BUG AND FEATURE REQUEST FOR VERSION 1.2.4 ARE STILL WELCOMED. THANKS A LOT. 
 YOU CAN COLLABORATE INTO THE NEW BRANCH http://github.com/FreedomCoder/esearchy-ng
 
+THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+THIS VERSION IS NO LONGER SUPPORTED USE : http://github.com/FreedomCoder/esearchy-ng
+
 == DESCRIPTION
 Esearchy is a small library capable of searching the internet for email addresses. Currently, the supported search methods are, but not limited to:
 
